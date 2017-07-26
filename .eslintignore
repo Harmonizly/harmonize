@@ -1,0 +1,5 @@
+config/*
+dist/*
+logs/*
+static/*
+index.js

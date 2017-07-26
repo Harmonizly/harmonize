@@ -1,0 +1,9 @@
+{
+  "name": "bustle",
+  "version": "0.0.1",
+  "description": "Social and life coordination for the busy adult",
+  "main": "index.js",
+  "repository": "https://github.com/gooftroop/bustle",
+  "author": "Brandon Webb <webb.c.brandon@gmail.com>",
+  "license": "UNLICENSED"
+}
