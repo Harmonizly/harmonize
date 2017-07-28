@@ -8,7 +8,7 @@
       {
         "alias": {
           "server": "./src/server",
-          "views": "./src/views",
+          "services": "./src/server/services",
           "static": "./static",
           "configuration": "./config",
           "test": "./test"

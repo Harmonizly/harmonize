@@ -49,7 +49,6 @@
     }],
     "no-plusplus": 0,
     "no-restricted-syntax": 0,
-    "no-underscore-dangle": [ 2, { "allow": [ "__DEV__" ] } ],
     "strict": 0
   },
   "settings": {

@@ -19,6 +19,7 @@ esproposal.decorators=ignore
 esproposal.export_star_as=enable
 
 module.name_mapper='^server\/\(.*\)$' -> '<PROJECT_ROOT>/src/server/\1'
+module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/server/services/\1'
 module.name_mapper='^test\/\(.*\)$' -> '<PROJECT_ROOT>/test/\1'
 module.name_mapper='^client\/\(.*\)$' -> '<PROJECT_ROOT>/src/client/\1'
 module.name_mapper='^configuration\/\(.*\)$' -> '<PROJECT_ROOT>/config/\1'

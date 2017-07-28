@@ -88,6 +88,7 @@ export default class Server {
   async getSwaggerConfigs(): Object {
     const apiSwagger = await require('server/api/swagger.yml');
     const accountSwagger = await require('server/services/account/swagger.yml');
+    const authSwagger = await require('server/services/auth/swagger.yml');
     const eventsSwagger = await require('server/services/events/swagger.yml');
     const friendsSwagger = await require('server/services/friends/swagger.yml');
     const messagingSwagger = await require('server/services/messaging/swagger.yml');
@@ -99,6 +100,7 @@ export default class Server {
     return Object.assign({},
       apiSwagger,
       accountSwagger,
+      authSwagger,
       eventsSwagger,
       friendsSwagger,
       messagingSwagger,
