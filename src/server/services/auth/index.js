@@ -14,6 +14,9 @@ export default function(app: Object): Object {
   const configuredPassport: Object = passport(authConfig.passport);
   app.use(configuredPassport.initialize());
   app.use(configuredPassport.session());
+
+  // TODO ensure logged in 
+
   app.set('passport', configuredPassport);
   return app;
 }

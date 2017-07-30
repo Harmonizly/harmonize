@@ -1,0 +1,28 @@
+paths:
+  /login:
+  /logout:
+  /auth/auth0/callback:
+  /auth/reset-password:
+  /auth/request-password-reset:
+  /auth/verify:
+  /users/{username}:
+definitions:
+  User:
+    type: object
+    requeired:
+      - email
+      - username
+    properties:
+      username:
+        type: string
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string
+      status:
+        type: integer
+        format: int32

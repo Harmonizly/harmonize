@@ -87,29 +87,46 @@ export default class Server {
    */
   async getSwaggerConfigs(): Object {
     const apiSwagger = await require('server/api/swagger.yml');
-    const accountSwagger = await require('server/services/account/swagger.yml');
-    const authSwagger = await require('server/services/auth/swagger.yml');
-    const eventsSwagger = await require('server/services/events/swagger.yml');
-    const friendsSwagger = await require('server/services/friends/swagger.yml');
-    const messagingSwagger = await require('server/services/messaging/swagger.yml');
-    const networkingSwagger = await require('server/services/networking/swagger.yml');
-    const restrauntsSwagger = await require('server/services/restraunts/swagger.yml');
-    const schedulingSwagger = await require('server/services/scheduling/swagger.yml');
-    const transportationSwagger = await require('server/services/transportation/swagger.yml');
-    const userSwagger = await require('server/services/user/swagger.yml');
-    return Object.assign({},
-      apiSwagger,
-      accountSwagger,
-      authSwagger,
-      eventsSwagger,
-      friendsSwagger,
-      messagingSwagger,
-      networkingSwagger,
-      restrauntsSwagger,
-      schedulingSwagger,
-      transportationSwagger,
-      userSwagger
+    const accountSwagger = await require('services/account/swagger.yml');
+    const authSwagger = await require('services/auth/swagger.yml');
+    const eventsSwagger = await require('services/events/swagger.yml');
+    const friendsSwagger = await require('services/friends/swagger.yml');
+    const messagingSwagger = await require('services/messaging/swagger.yml');
+    const networkingSwagger = await require('services/networking/swagger.yml');
+    const restrauntsSwagger = await require('services/restraunts/swagger.yml');
+    const schedulingSwagger = await require('services/scheduling/swagger.yml');
+    const transportationSwagger = await require('services/transportation/swagger.yml');
+    const userSwagger = await require('services/user/swagger.yml');
+
+    apiSwagger.paths = Object.assign({},
+      apiSwagger.paths,
+      accountSwagger.paths,
+      authSwagger.paths,
+      eventsSwagger.paths,
+      friendsSwagger.paths,
+      messagingSwagger.paths,
+      networkingSwagger.paths,
+      restrauntsSwagger.paths,
+      schedulingSwagger.paths,
+      transportationSwagger.paths,
+      userSwagger.paths
     );
+
+    apiSwagger.definitions = Object.assign({},
+      apiSwagger.definitions,
+      accountSwagger.definitions,
+      authSwagger.definitions,
+      eventsSwagger.definitions,
+      friendsSwagger.definitions,
+      messagingSwagger.definitions,
+      networkingSwagger.definitions,
+      restrauntsSwagger.definitions,
+      schedulingSwagger.definitions,
+      transportationSwagger.definitions,
+      userSwagger.definitions
+    );
+
+    return apiSwagger;
   }
 
   /**
@@ -118,8 +135,8 @@ export default class Server {
    * @return {[type]}        [description]
    */
   initSwagger(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const swaggerConfig = await getSwaggerConfigs();
+    return new Promise(async (resolve, reject) => {
+      const swaggerConfig = await this.getSwaggerConfigs();
       swagger.create({
         appRoot: process.cwd(),
         swagger: swaggerConfig

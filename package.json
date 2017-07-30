@@ -48,5 +48,21 @@
     "webpack": "^2.5.1",
     "webpack-node-externals": "^1.6.0",
     "yml-loader": "^2.0.1"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "body-parser": "^1.17.2",
+    "bunyan": "^1.8.10",
+    "caminte": "^0.4.0",
+    "config": "^1.26.1",
+    "connect-flash": "^0.1.1",
+    "connect-redis": "^3.3.0",
+    "express": "^4.15.3",
+    "express-session": "^1.15.4",
+    "passport": "^0.3.2",
+    "passport-auth0": "^0.6.0",
+    "pm2": "^2.6.1",
+    "swagger": "^0.7.5",
+    "swagger-node-runner": "^0.7.3"
   }
 }

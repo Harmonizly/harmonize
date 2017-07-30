@@ -32,5 +32,5 @@ export default logout = function(request: Object, response: Object): void {
   request.logout();
   // TODO clear session and create new one
   // TODO set flash message
-  response.redirect('/login');
+  return response.redirect('/login');
 }

@@ -1,5 +1,8 @@
 import passport from 'passport';
-import auth0 from 'services/auth/passport/auth0';
+import facebook from 'services/auth/passport/facebook';
+import google from 'services/auth/passport/facebook';
+import instagram from 'services/auth/passport/facebook';
+import local from 'services/auth/passport/local';
 
 /**
  * [description]
@@ -7,7 +10,10 @@ import auth0 from 'services/auth/passport/auth0';
  * @return {[type]}        [description]
  */
 export default function (config: Object): Object {
-  passport.use(auth0(config.auth0);
+  passport.use(facebook(config.facebook);
+  passport.use(google(config.google);
+  passport.use(instagram(config.instagram);
+  passport.use(local(config.local);
 
   // This can be used to keep a smaller payload
   passport.serializeUser(function(user, done) {
