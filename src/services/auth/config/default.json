@@ -1,0 +1,9 @@
+{
+   "passport": {
+      "facebook": {},
+      "google": {},
+      "instagram": {},
+      "local": {}
+   },
+    "session": {}
+ }

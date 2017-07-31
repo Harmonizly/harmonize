@@ -1,5 +1,3 @@
-// @flow
-
 import bodyParser from 'body-parser';
 import config from 'config';
 import express from 'express';
@@ -10,11 +8,11 @@ import process from 'process';
 import swagger from 'swagger-node-runner';
 import SwaggerUi from 'swagger-tools/middleware/swagger-ui';
 
-import ErrorMiddleware from 'server/common/middleware/error';
-import LoggingMiddleware from 'server/common/middleware/logging';
-import StaticMiddleware from 'server/api/middleware/static';
-
-import Logger from 'server/common/utils/logger';
+import ErrorMiddleware from 'server/middleware/error';
+import Logger from 'server/utils/logger';
+import LoggingMiddleware from 'server/middleware/logging';
+import StaticMiddleware from 'server/middleware/static';
+import swaggerConfig from 'server/config/swagger.yaml';
 
 /**
  * [app description]
@@ -77,66 +75,12 @@ export default class Server {
   }
 
   /**
-   * [getSwaggerConfigs description]
-   * Temporary function until services are broken into microservices, then all services are
-   * responsible for their own swagger configs
-   * @param  {[type]} Object  [description]
-   * @param  {[type]} swagger [description]
-   * @param  {[type]} error   [description]
-   * @return {[type]}         [description]
-   */
-  async getSwaggerConfigs(): Object {
-    const apiSwagger = await require('server/api/swagger.yml');
-    const accountSwagger = await require('services/account/swagger.yml');
-    const authSwagger = await require('services/auth/swagger.yml');
-    const eventsSwagger = await require('services/events/swagger.yml');
-    const friendsSwagger = await require('services/friends/swagger.yml');
-    const messagingSwagger = await require('services/messaging/swagger.yml');
-    const networkingSwagger = await require('services/networking/swagger.yml');
-    const restrauntsSwagger = await require('services/restraunts/swagger.yml');
-    const schedulingSwagger = await require('services/scheduling/swagger.yml');
-    const transportationSwagger = await require('services/transportation/swagger.yml');
-    const userSwagger = await require('services/user/swagger.yml');
-
-    apiSwagger.paths = Object.assign({},
-      apiSwagger.paths,
-      accountSwagger.paths,
-      authSwagger.paths,
-      eventsSwagger.paths,
-      friendsSwagger.paths,
-      messagingSwagger.paths,
-      networkingSwagger.paths,
-      restrauntsSwagger.paths,
-      schedulingSwagger.paths,
-      transportationSwagger.paths,
-      userSwagger.paths
-    );
-
-    apiSwagger.definitions = Object.assign({},
-      apiSwagger.definitions,
-      accountSwagger.definitions,
-      authSwagger.definitions,
-      eventsSwagger.definitions,
-      friendsSwagger.definitions,
-      messagingSwagger.definitions,
-      networkingSwagger.definitions,
-      restrauntsSwagger.definitions,
-      schedulingSwagger.definitions,
-      transportationSwagger.definitions,
-      userSwagger.definitions
-    );
-
-    return apiSwagger;
-  }
-
-  /**
    * [initSwagger description]
    * @param  {[type]} Promise [description]
    * @return {[type]}        [description]
    */
   initSwagger(): Promise<void> {
     return new Promise(async (resolve, reject) => {
-      const swaggerConfig = await this.getSwaggerConfigs();
       swagger.create({
         appRoot: process.cwd(),
         swagger: swaggerConfig

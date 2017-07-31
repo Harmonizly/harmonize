@@ -4,7 +4,7 @@ import debug from 'debug';
 import assert from 'assert';
 import util from 'util';
 
-import * as controllers from 'server/api/controllers';
+import * as controllers from 'server/controllers';
 
 const SWAGGER_ROUTER_CONTROLLER = 'x-swagger-router-controller';
 const CONTROLLER_INTERFACE_TYPE = 'x-controller-interface';
@@ -23,7 +23,7 @@ module.exports = function create(def, bagpipes) {
   );
 
   const swaggerNodeRunner = bagpipes.config.swaggerNodeRunner;
-  swaggerNodeRunner.api.getOperations().forEach(function (op) {
+  swaggerNodeRunner.api.getOperations().forEach((op) => {
     const operation = op;
     const interfaceType =
       operation.controllerInterface =
