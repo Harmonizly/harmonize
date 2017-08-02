@@ -1,3 +1,17 @@
+swagger: '2.0'
+info:
+  title: Harmonize API
+  description: Connect, do, and harominze your life
+  version: "1.0.0"
+# the domain of the service
+host: localhost:3000
+# array of all schemes that your API supports
+schemes:
+  - http
+  - https
+# will be prefixed to all paths
+produces:
+  - application/json
 paths:
   /login:
   /logout:

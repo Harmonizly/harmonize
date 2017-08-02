@@ -1,9 +1,17 @@
 {
-   "passport": {
-      "facebook": {},
-      "google": {},
-      "instagram": {},
-      "local": {}
-   },
-    "session": {}
- }
+  "db": {
+    "driver": "neo4j",
+    "host": "localhost",
+    "port": 7474,
+    "username": "",
+    "password": ""
+  },
+  "passport": {
+    "facebook": {},
+    "google": {},
+    "instagram": {},
+    "local": {}
+  },
+  "saltRounds": 10,
+  "session": {}
+}

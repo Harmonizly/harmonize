@@ -30,6 +30,7 @@
     ],
     "class-methods-use-this": 0,
     "comma-dangle": 0,
+    "flowtype/no-types-missing-file-annotation": 0,
     "func-names": 0,
     "global-require": 0,
     "import/extensions": 0,
