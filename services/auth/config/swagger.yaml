@@ -1,0 +1,403 @@
+openapi: 3.0.0
+info:
+  title: Harmonize API
+  description: Connect, do, and harominze your life
+  version: 1.0.0
+servers:
+  - url: "http://localhost:3000/auth"
+    description: Development server
+paths:
+  /login:
+    get:
+      x-swagger-controller: login
+      summary: Renders the login page
+      operationId: render
+      responses:
+        200:
+          description: The login HTML page
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      summary: Validates the user's username and password
+      operationId: login
+      requestBody:
+        description: The JSON object containing the username and password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        302:
+          description: Redirects on a successful login
+          headers:
+            Location:
+              schema:
+                type: string
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /logout:
+    post:
+      summary: Invalidates the user's session and redirects them to the login page
+      operationId: logout
+      responses:
+        302:
+          description: Redirects on a successful logout
+          headers:
+            Location:
+              schema:
+                type: string
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /facebook:
+    get:
+      summary: Trigger the Facebook OAuth2 flow
+      operationId: auth
+      responses:
+        302:
+          description: Redirects to the Facebook Account selection screen
+          headers:
+            Location:
+              schema:
+                type: string
+  /facebook/callback:
+    get:
+      summary: Receive the result of the Facebook OAuth2 flow
+      operationId: callback
+      responses:
+        302:
+          description: Redirects to the success or failure urls
+          headers:
+            Location:
+              schema:
+                type: string
+  /google:
+    get:
+      summary: Trigger the Google OAuth2 flow
+      operationId: auth
+      responses:
+        302:
+          description: Redirects to the Google Account selection screen
+          headers:
+            Location:
+              schema:
+                type: string
+  /google/callback:
+    get:
+      summary: Receive the result of the Google OAuth2 flow
+      operationId: callback
+      responses:
+        302:
+          description: Redirects to the success or failure urls
+          headers:
+            Location:
+              schema:
+                type: string
+  /instagram:
+    get:
+      summary: Trigger the Instagram OAuth2 flow
+      operationId: auth
+      responses:
+        302:
+          description: Redirects to the Instagram Account selection screen
+          headers:
+            Location:
+              schema:
+                type: string
+  /instagram/callback:
+    get:
+      summary: Receive the result of the Instagram OAuth2 flow
+      operationId: callback
+      responses:
+        302:
+          description: Redirects to the success or failure urls
+          headers:
+            Location:
+              schema:
+                type: string
+  /password/reset:
+    get:
+      summary: Renders the Password Reset page
+      operationId: render
+      responses:
+        200:
+          description: The reset password page
+          content:
+            text/html:
+              schema:
+                type: string
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      summary: Validates and commits the new password
+      operationId: resetPassword
+      requestBody:
+        description: The JSON object containing the user's new password and a verification password
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+      responses:
+        302:
+          description: The password was updated
+          headers:
+            Location:
+              schema:
+                type: string
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /password/reset/request:
+    get:
+      summary: Renders the Password Reset Request page
+      operationId: render
+      responses:
+        200:
+          description: The Password Reset Request HTML page
+          content:
+            text/html:
+              schema:
+                type: string
+    post:
+      summary: >
+        Triggers a new Password Reset email to the provided email address
+        if and only if the email exists in the database
+      operationId: requestPasswordReset
+      requestBody:
+        description: The JSON object containing the possibly valid user's email
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetRequest'
+      responses:
+        200:
+          description: The request was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /validate:
+    get:
+      # TODO add required cookie with token
+      operationId: validate
+      responses:
+        204:
+          description: The session is valid
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /users/{username}:
+    delete:
+      summary: >
+        Deletes the user specified by the provided username and returns a 200 if the operation was successful or 404
+        if no user was found by the provided username
+      operationId: deleteUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The user was deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        404:
+          description: Indicates that no user was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+          description: An error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      summary: Returns the user specified by the username parameter, or 404 if no user could be found
+      operationId: getUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: The resulting user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SafeUser'
+        404:
+          description: Indicates that no user was found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+            description: An error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+    post:
+      summary: Creates the user specified by the username parameter with the provided data
+      operationId: createUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The JSON object containing the new user data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        201:
+          description: The user was created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+            description: An error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+    put:
+      summary: Updates the user specified by the username parameter with the provided data
+      operationId: updateUser
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The JSON object containing the new user data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: The user was updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        default:
+            description: An error response
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+        - status
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        status:
+          type: integer
+          format: int32
+    Login:
+      type: object
+      required:
+        - password
+        - username
+      properties:
+        password:
+          type: string
+        username:
+          type: string
+    Message:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    PasswordReset:
+      type: object
+      required:
+        - password
+        - verifyPassword
+      properties:
+        password:
+          type: string
+        verifyPassword:
+          type: string
+    PasswordResetRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+    User:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    SafeUser:
+      type: object
+      required:
+        - email
+        - username
+      properties:
+        email:
+          type: string
+        username:
+          type: string

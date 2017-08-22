@@ -1,0 +1,97 @@
+{
+  "auth": {
+    "db": {
+      "server": "localhost:7474",
+      "endpoint": "auth",
+      "username": "",
+      "password": ""
+    },
+    "passport": {
+      "facebook": {
+        "clientID": "266005010549455",
+        "clientSecret": "1c089e5d79189174114e2b66a6ccdaba",
+        "callbackURL": "localhost:3000/auth/facebook/callback",
+        "passReqToCallback": true
+      },
+      "google": {
+        "clientID": "272978634190-l7ufeg8liumipuptok248ss7m4acs785.apps.googleusercontent.com",
+        "clientSecret": "U5Y6WFjg2JHl_LVzmhcsBVhi",
+        "callbackURL": "localhost:3000/auth/google/callback",
+        "passReqToCallback": true
+      },
+      "instagram": {
+        "clientID": "ed84945907a34d7e97256e2d30628de4",
+        "clientSecret": "a64641543c81493a8af85ce83aa6c007",
+        "callbackURL": "localhost:3000/auth/instagram/callback",
+        "passReqToCallback": true
+      },
+      "local": {
+        "passReqToCallback": true
+      }
+    },
+    "saltRounds": 10,
+    "session": {}
+  },
+  "loggers": {
+    "handlers": [
+      {
+        "name": "root",
+        "level": "debug"
+      },
+      {
+        "name": "auth",
+        "level": "debug"
+      },
+      {
+        "name": "db",
+        "level": "debug"
+      }
+    ],
+    "streams": {}
+  },
+  "server": {
+    "backlog": 511,
+    "hostname": "localhost",
+    "port": 3000,
+    "secure": false,
+    "assets": {
+      "distRoot": "dist",
+      "staticRoot": "static"
+    },
+    "ssl": {
+      "key": "",
+      "cert": "",
+      "passphrase": ""
+    }
+  },
+  "swagger": {
+    "fittingsDirs": [ "./dist/fittings", "node_modules" ],
+    "defaultPipe": null,
+    "swaggerControllerPipe": "swagger_controllers",
+    "bagpipes": {
+      "router": {
+        "name": "router",
+        "mockMode": false,
+        "mockControllersDirs": [ "./dist/mocks/controllers" ],
+        "controllersDirs": [ "./dist/controllers" ]
+      },
+      "swagger_validate": {
+        "name": "swagger_validator",
+        "validateResponse": true
+      },
+      "swagger_controllers": [
+        {
+          "onError": "json_error_handler"
+        },
+        "swagger_params_parser",
+        "swagger_security",
+        "swagger_validate",
+        "express_compatibility",
+        "router"
+      ],
+      "swagger_raw": {
+        "name": "swagger_raw"
+      }
+    }
+  }
+}
