@@ -2,7 +2,7 @@ import App from 'client/app';
 import es6Renderer from 'express-es6-template-engine';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import index from 'static/index.html';
+import template from 'static/index.html';
 import { StaticRouter } from 'react-router';
 
 /**
@@ -12,7 +12,8 @@ import { StaticRouter } from 'react-router';
  * @param  {Function} next     [description]
  * @return {[type]}            [description]
  */
-export default function render(request: Object, response: Object, next: Function): void {
+export default function renderMiddleware(request: Object, response: Object, next: Function): void {
+  console.log('inside renderMiddleware');
   // eslint-disable-next-line no-param-reassign
   response.render = (url: string, data: Object): void => {
     const context: Object = Object.assign({}, data);
@@ -26,10 +27,11 @@ export default function render(request: Object, response: Object, next: Function
       return response.redirect(301, context.url);
     }
 
-    const html: string = es6Renderer(index, { locals: { app: markup } });
+    const html: string = es6Renderer(template, { locals: { app: markup } });
 
     return response.send(html);
   };
+  console.log(response.render);
 
   next();
 }

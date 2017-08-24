@@ -1,22 +1,165 @@
+// @flow
 import bunyan from 'bunyan';
 import config from 'config';
 import createCWStream from 'bunyan-cloudwatch';
-import NewRelicStream from 'bunyan-newrelic-stream';
 import process from 'process';
+import NewRelicStream from 'bunyan-newrelic-stream';
+import stackTrace from 'stack-trace';
 import uuidv4 from 'uuid/v4';
 
-let instance: Object | null = null;
+const DEFAULT_MESSAGE: string = 'This is not the message you are looking for';
+
+// eslint-disable-next-line
+let instance: ?Logger = null;
 
 /**
- * Class representing Logger
+ * [app description]
+ * @type {[type]}
+ */
+class LoggingSchema {
+  app: string = config.get('server').appName;
+  category: string;
+  code: number;
+  message: string;
+  sessionId: string;
+  status: number;
+  time: string = new Date().toUTCString();
+  trace: Array<Object>;
+  transactionId: number;
+  user: Object = {};
+
+  /**
+   * [constructor description]
+   * @param  {Number} [code=-1]                 [description]
+   * @param  {[type]} level                     [description]
+   * @param  {[type]} [message=DEFAULT_MESSAGE] [description]
+   * @param  {Number} [status=-1]               [description]
+   * @param  {Array}  [trace=[]]                [description]
+   * @return {[type]}                           [description]
+   */
+  constructor({ category = '', code = -1, message = DEFAULT_MESSAGE, status = -1, trace = [] } = {}) {
+    this.category = category;
+    this.code = code;
+    this.message = message;
+    this.status = status;
+    this.trace = trace;
+
+    const transaction: Object = process.domain;
+
+    if (transaction) {
+      const request: Object = transaction.data.request;
+
+      this.sessionId = request.session && request.session.id;
+      this.transactionId = transaction.data.id;
+
+      if (request.user) {
+        this.user = {
+          id: request.user.id,
+          username: request.user.username
+        };
+      }
+    }
+  }
+
+  /**
+   * [type description]
+   * @type {[type]}
+   */
+  toJSON(): Object {
+    return {
+      app: this.app,
+      category: this.category,
+      code: this.code,
+      message: this.message,
+      sessionId: this.session,
+      status: this.status,
+      time: this.time,
+      trace: this.trace,
+      transactionId: this.transactionId,
+      user: this.user
+    };
+  }
+}
+
+/**
+ * [debug description]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+const debug = async function debug(...args) {
+  // eslint-disable-next-line
+  const payload: Object = Logger.resolvePayload(args);
+  // eslint-disable-next-line
+  const trace: Array<Object> = await Logger.getCallStack(debug);
+
+  payload.trace = trace;
+  const loggingData: LoggingSchema = new LoggingSchema(payload);
+
+  this.existingDebug(loggingData.toJSON());
+};
+
+/**
+ * [error description]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+const error = async function error(...args) {
+  // eslint-disable-next-line
+  const payload: Object = Logger.resolvePayload(args);
+  // eslint-disable-next-line
+  const trace: Array<Object> = await Logger.getErrorCallStack(error);
+
+  payload.trace = trace;
+  const loggingData: LoggingSchema = new LoggingSchema(payload);
+
+  this.existingError(loggingData.toJSON());
+};
+
+/**
+ * [info description]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+const info = async function info(...args) {
+  // eslint-disable-next-line
+  const payload: Object = Logger.resolvePayload(args);
+  // eslint-disable-next-line
+  const trace: Array<Object> = await Logger.getCallStack(info);
+
+  payload.trace = trace;
+  const loggingData: LoggingSchema = new LoggingSchema(payload);
+
+  this.existingInfo(loggingData.toJSON());
+};
+
+/**
+ * [warn description]
+ * @param  {[type]} data [description]
+ * @return {[type]}      [description]
+ */
+const warn = async function warn(...args) {
+  // eslint-disable-next-line
+  const payload: Object = Logger.resolvePayload(args);
+  // eslint-disable-next-line
+  const trace: Array<Object> = await Logger.getCallStack(warn);
+
+  payload.trace = trace;
+  const loggingData: LoggingSchema = new LoggingSchema(payload);
+
+  this.existingWarn(loggingData.toJSON());
+};
+
+/**
+ * [loggers description]
+ * @type {[type]}
  */
 export default class Logger {
-
   loggers: Object = {};
 
   /**
-   * Instantiates instance or returns previous one if it already exists
-   * @return { Object } Instance of the Logger class by calling init method
+   * [constructor description]
+   * @param  {[type]} config [description]
+   * @return {[type]}        [description]
    */
   constructor(): Object {
     if (instance == null) {
@@ -27,12 +170,14 @@ export default class Logger {
   }
 
   /**
-   * Initialization method which sets logger using provided confing and depending on an environment
-   * @param { Object } loggersConfig - Configuration options for logger
+   * [init description]
+   * @param  {[type]} handlersConfig [description]
+   * @return {[type]}        [description]
    */
   init(loggersConfig: Object): void {
     let loggerConfig;
     const handlersConfig = loggersConfig.get('handlers');
+
     handlersConfig.forEach((obj) => {
       loggerConfig = Object.assign({}, obj);
       const name = loggerConfig.name.toLowerCase();
@@ -41,14 +186,24 @@ export default class Logger {
       delete loggerConfig.stream;
       const logger: Object = bunyan.createLogger(loggerConfig);
 
-      this.loadStreams(logger, stream, loggersConfig.get('streams'));
+      logger.existingDebug = logger.debug;
+      logger.existingError = logger.error;
+      logger.existingInfo = logger.info;
+      logger.existingWarn = logger.warn;
+
+      logger.debug = debug.bind(logger);
+      logger.error = error.bind(logger);
+      logger.info = info.bind(logger);
+      logger.warn = warn.bind(logger);
+
+      Logger.loadStreams(logger, stream, loggersConfig.get('streams'));
       this.loggers[name] = logger;
     });
 
     // Enable forwarding logged errors to Newrelic Reporting if the server is in a production environment
     if (process.env.NODE_ENV === 'production') {
       bunyan.createLogger({
-        name: 'arbiter',
+        name: config.get('server').appName,
         streams: [{
           level: 'error',
           type: 'raw',
@@ -59,9 +214,31 @@ export default class Logger {
   }
 
   /**
-   * Gets certain logger by name or returns root if name isn't provided
-   * @param  { string } name - Name of the logger we want to get
-   * @return { Object } Logger of the nae we provided
+   * [formatTrace description]
+   * @param  {[type]} Array [description]
+   * @return {[type]}       [description]
+   */
+  static formatTrace(trace: Array<Object>): Array<Object> {
+    const formatted: Array<Object> = [];
+    let callSite: Object;
+
+    for (let i = 0; i < trace.length; i++) {
+      callSite = trace[i];
+      formatted.push({
+        fileName: callSite.getFileName(),
+        functionName: callSite.getFunctionName(),
+        lineNumber: callSite.getLineNumber(),
+        methodName: callSite.getMethodName(),
+        typeName: callSite.getTypeName()
+      });
+    }
+    return formatted;
+  }
+
+  /**
+   * [get description]
+   * @param  {[type]} name [description]
+   * @return {[type]}      [description]
    */
   static get(name: string): Object {
     if (!instance) {
@@ -69,6 +246,7 @@ export default class Logger {
     }
 
     let loggerName;
+
     if (name == null) {
       loggerName = 'root';
     } else {
@@ -78,13 +256,37 @@ export default class Logger {
   }
 
   /**
-   * Loads streams for cloudwatch
-   * @param { Object } logger - logger instance
-   * @param { string } name - name of the stream
-   * @param { Object } streamsConfig - configuration for the stream
+   * [getCallStack description]
+   * @param  {[type]}  belowFn [description]
+   * @return {Promise}         [description]
    */
-  loadStreams(logger: Object, name: string, streamsConfig: Object): void {
+  static async getCallStack(belowFn: Function): Promise<Array<Object>> {
+    return new Promise((resolve: Function): void => {
+      const trace: Array<Object> = stackTrace.get(belowFn);
+
+      resolve(Logger.formatTrace([trace[0]]));
+    });
+  }
+
+  /**
+   * [getCallStack description]
+   * @param  {[type]}  belowFn [description]
+   * @return {Promise}         [description]
+   */
+  static async getErrorCallStack(err: Object): Promise<Array<Object>> {
+    return new Promise((resolve: Function): void => {
+      const trace: Array<Object> = stackTrace.parse(err);
+
+      resolve(Logger.formatTrace(trace));
+    });
+  }
+
+  /**
+   *
+   */
+  static loadStreams(logger: Object, name: string, streamsConfig: Object): void {
     let streamConfig;
+
     switch (name) {
       case 'cloudwatch':
         streamConfig = Object.assign({}, streamsConfig.get('cloudwatch'));
@@ -99,4 +301,47 @@ export default class Logger {
         break;
     }
   }
+
+  /**
+   * [resolvePayload description]
+   * @param  {[type]} args [description]
+   * @return {[type]}      [description]
+   */
+  static resolvePayload(args): Object {
+    let payload: Object = {};
+    const arg1: any = args[0];
+
+    switch (typeof arg1) {
+      case 'object':
+        payload = arg1;
+        break;
+      default:
+        payload.message = arg1;
+        payload.code = args[1];
+        break;
+    }
+    return payload;
+  }
+}
+
+/**
+ * Setup automatic function call logging when in debug mode
+ * @param  {[type]} config [description]
+ * @return {[type]}        [description]
+ */
+if (config.debug) {
+  const logger: Object = Logger.get('root');
+  const oldCall: Function = Function.prototype.call;
+  const newCall: Function = function (self) {
+    Function.prototype.call = oldCall;
+    logger.debug({ message: `Entering method ${this.name}`, method: this.name });
+    const args: Array<any> = Array.prototype.slice.call(arguments, 1);
+    const ret: any = this.apply(self, args);
+
+    logger.debug({ message: `Exiting method ${this.name}`, method: this.name });
+    Function.prototype.call = newCall;
+    return ret;
+  };
+
+  Function.prototype.call = newCall;
 }

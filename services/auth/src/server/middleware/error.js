@@ -11,11 +11,18 @@ const LOGGER: Object = Logger.get('root');
  * @param  {[type]} response [description]
  * @return {[type]}          [description]
  */
-export default function (error: any, request: Object, response: Object): void {
+export default function errorMiddleware(error: any, request: Object, response: Object): void {
   const status: number = ('status' in error) ? error.status : 500;
   const code: number = ('code' in error) ? error.code : -1;
 
-  LOGGER.error(error);
+  LOGGER.error({
+    message: error.message,
+    status: error.status,
+    code: error.code,
+    app: 'auth'
+  });
+
+  console.log(response.render);
 
   switch (status) {
     case 400:

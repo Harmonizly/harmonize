@@ -102,16 +102,34 @@ const validateRequest = function (operation: Object, request: Object): void {
  * @param  {[type]} controllers [description]
  * @return {[type]}             [description]
  */
-export default async function swagger(definition: Object, controllers: Object): Function {
+export default async function swaggerMiddleware(definition: Object, controllers: Object): Function {
   const api: Object = await Sway.create({ definition });
 
+  /**
+   * As of 08/22/17 Sway currently supports up to version 2.0.
+   * The following code attempts to monkey-patch the resulting Sway API object to force compatibility to 3.0
+   */
+
+  /**
+   * [return description]
+   * @param  {[type]}   request  [description]
+   * @param  {[type]}   response [description]
+   * @param  {Function} next     [description]
+   * @return {[type]}            [description]
+   */
   return (request: Object, response: Object, next: Function): void => {
     const path: Object = api.getPath(request);
 
+    console.log(api);
+
+    console.log(request.originalUrl);
+
     // This route is not a swagger route - continue
     if (!path) {
+      console.log('This is not a swagger route');
       return next();
     }
+    console.log('This is a swagger route');
 
     const operation: Object = path.getOperation(request.method);
 

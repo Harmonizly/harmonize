@@ -11,8 +11,11 @@ import loggingMiddleware from 'server/middleware/logging';
 import passport from 'server/passport';
 import process from 'process';
 import renderMiddleware from 'server/middleware/render';
-import swaggerConfig from 'configuration/swagger.yaml';
-import swaggerMiddleware from 'server/middleware/swagger';
+import swaggerDefinition from 'configuration/swagger.yaml';
+// import swaggerMiddleware from 'server/middleware/swagger';
+import transactionMiddleware from 'server/middleware/transaction';
+
+import openApi from 'lib/openApi/v3';
 
 /**
  * [app description]
@@ -69,18 +72,8 @@ export default class Server {
    * @return {Promise}      [description]
    */
   async initMiddleware(): void {
-    // Initialize body parser before routes or body will be undefined
-    this.app.use(bodyParser.urlencoded({ extended: true }));
-    this.app.use(bodyParser.json());
-
-    // Add flash message capabilities
-    this.app.use(flash({ unsafe: true }));
-
     // Configure Request logging
     this.app.use(loggingMiddleware);
-
-    // Override the default rendering function
-    this.app.use(renderMiddleware);
 
     // Configure the Express Static middleware
     const assetsConfig = this.config.assets;
@@ -88,14 +81,28 @@ export default class Server {
     this.app.use('/', express.static(assetsConfig.staticRoot));
     this.app.use('/', express.static(assetsConfig.distRoot));
 
+    this.app.use(transactionMiddleware);
+
+    // Override the default rendering function
+    this.app.use(renderMiddleware);
+
+    // Initialize body parser before routes or body will be undefined
+    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(bodyParser.json());
+
+    // Add flash message capabilities
+    this.app.use(flash({ unsafe: true }));
+
     // Configure passport.js
     this.app.use(passport.initialize());
     this.app.use(passport.session());
 
     // Configure the Swagger Middleware by using Sway
-    const swayMiddleware: Function = await swaggerMiddleware(swaggerConfig, controllers);
+    // const swayMiddleware: Function = await swaggerMiddleware(swaggerConfig, controllers);
+    //
+    // this.app.use(swayMiddleware);
 
-    this.app.use(swayMiddleware);
+    openApi(swaggerDefinition);
 
     // Configure the request error handling
     this.app.use(errorMiddleware);

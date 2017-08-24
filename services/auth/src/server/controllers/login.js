@@ -30,5 +30,6 @@ export const logout = function (request: Object, response: Object): void {
  * @return {[type]}          [description]
  */
 export const render = function (request: Object, response: Object): void {
-  return response.render('/login');
+  console.log('inside login.render function');
+  return response.render('/auth/login');
 };
