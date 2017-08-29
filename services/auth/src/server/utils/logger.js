@@ -18,7 +18,6 @@ let instance: ?Logger = null;
  */
 class LoggingSchema {
   app: string = config.get('server').appName;
-  category: string;
   code: number;
   message: string;
   sessionId: string;
@@ -37,8 +36,7 @@ class LoggingSchema {
    * @param  {Array}  [trace=[]]                [description]
    * @return {[type]}                           [description]
    */
-  constructor({ category = '', code = -1, message = DEFAULT_MESSAGE, status = -1, trace = [] } = {}) {
-    this.category = category;
+  constructor({ code = -1, message = DEFAULT_MESSAGE, status = -1, trace = [] } = {}) {
     this.code = code;
     this.message = message;
     this.status = status;
@@ -225,11 +223,11 @@ export default class Logger {
     for (let i = 0; i < trace.length; i++) {
       callSite = trace[i];
       formatted.push({
-        fileName: callSite.getFileName(),
-        functionName: callSite.getFunctionName(),
-        lineNumber: callSite.getLineNumber(),
-        methodName: callSite.getMethodName(),
-        typeName: callSite.getTypeName()
+        class: callSite.getTypeName(),
+        file: callSite.getFileName(),
+        function: callSite.getFunctionName(),
+        line: callSite.getLineNumber(),
+        method: callSite.getMethodName()
       });
     }
     return formatted;
