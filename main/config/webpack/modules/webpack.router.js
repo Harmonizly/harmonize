@@ -1,52 +1,45 @@
-const webpack = require('webpack');
-const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const path = require('path');
+const webpack = require('webpack');
 
-// This is not particularly robust...
-const root = process.cwd();
+const cwd = process.cwd();
 
 const routerCompiler = {
     target: 'node',
-    cache: false,
     devtool: 'source-map',
     entry: [
       "babel-polyfill",
-      path.join(root, 'src/server/api/router')
+      path.join(cwd, 'src/server/router')
     ],
     resolve: {
       modules: [
-        path.join(root, 'node_modules')
+        path.join(cwd, 'node_modules')
       ],
-      alias: {
-        server: path.join(root, 'src/server'),
-        services: path.join(root, 'src/server/services')
-      },
       extensions: ['.json', '.js', '.min.js']
     },
     module: {
       rules: [
         {
+          test: /\.html$/,
+          use: 'html-loader',
+          exclude: /node_modules/
+        },
+        {
           test: /\.js$/,
-          loader: 'babel-loader',
+          use: 'babel-loader',
           exclude: /node_modules/
         }
       ],
       noParse: /\.min\.js/
     },
-    externals: [nodeExternals()],
+    externals: [ nodeExternals() ],
     plugins: [
-      new webpack.EnvironmentPlugin({
-        DEBUG: false,
-        __CLIENT__: false,
-        __SERVER__: true,
-        __PRODUCTION__: false,
-        __DEV__: true
-      })
+      new webpack.optimize.ModuleConcatenationPlugin()
     ],
     output: {
       filename: 'router.js',
       libraryTarget: "commonjs2",
-      path: path.join(root, 'dist/fittings')
+      path: path.join(cwd, 'dist/fittings')
     }
 };
 

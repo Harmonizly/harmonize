@@ -4,15 +4,18 @@ import express from 'express';
 import flash from 'connect-flash-plus';
 import fs from 'fs';
 import https from 'https';
-import process from 'process';
-import swagger from 'swagger-node-runner';
-import SwaggerUi from 'swagger-tools/middleware/swagger-ui';
-
-import ErrorMiddleware from 'server/middleware/error';
 import Logger from 'server/utils/logger';
-import LoggingMiddleware from 'server/middleware/logging';
-import StaticMiddleware from 'server/middleware/static';
-import swaggerConfig from 'server/config/swagger.yaml';
+import requestLogger from 'server/middleware/logging';
+import process from 'process';
+import renderingEngine from 'express-es6-template-engine';
+import staticMiddleware from 'server/middleware/static';
+import swagger from 'swagger-node-runner';
+import swaggerConfig from 'configuration/swagger.yaml';
+import SwaggerUi from 'swagger-tools/middleware/swagger-ui';
+import transactionMiddleware from 'server/middleware/transaction';
+
+import { redirectHandler, renderHandler } from 'server/controllers/app';
+import { errorMiddleware, notFoundError} from 'server/middleware/error';
 
 /**
  * [app description]
@@ -33,10 +36,9 @@ export default class Server {
     this.config = config.get('server');
 
     try {
-      this.configure();
-
       // Initialize the express server
       this.app = express();
+      this.configure();
     } catch (e) {
       if (this.logger) {
         this.logger.error(e);
@@ -63,6 +65,11 @@ export default class Server {
     // Catches uncaught exceptions
     this.boundUncaughtExceptionHandler = ::this.unhandledExceptionHandler;
     process.on('uncaughtException', this.boundUncaughtExceptionHandler);
+
+    // Setup the express rendering engine
+    this.app.engine('html', renderingEngine);
+    this.app.set('views', 'static');
+    this.app.set('view engine', 'html');
   }
 
   /**
@@ -79,36 +86,35 @@ export default class Server {
    * @param  {[type]} Promise [description]
    * @return {[type]}        [description]
    */
-  initSwagger(): Promise<void> {
-    return new Promise(async (resolve, reject) => {
-      swagger.create({
-        appRoot: process.cwd(),
-        swagger: swaggerConfig
-      }, (error: any, runner: Object): void => {
-        if (error) {
-          return reject(error);
-        }
+   initSwagger(): Promise<void> {
+     return new Promise((resolve, reject) => {
+       swagger.create({
+         appRoot: process.cwd(),
+         swagger: swaggerConfig,
+         swaggerSecurityHandlers: {}
+       }, (error: any, runner: Object): void => {
 
-        const middleware = runner.expressMiddleware();
+         if (error) {
+           return reject(error);
+         }
 
-        // Add swagger-ui (This must be before swaggerExpress.register)
-        this.app.use(SwaggerUi(middleware.runner.swagger));
-
-        // install middleware
-        middleware.register(this.app);
-
-        return resolve();
-      });
-    });
-  }
+         const middleware = runner.expressMiddleware();
+         this.app.use(SwaggerUi(middleware.runner.swagger));
+         middleware.register(this.app);
+         return resolve();
+       });
+     });
+   }
 
   /**
-   * Attach middleware to the Express app.
+   * Attach middleware & controllers to the Express app.
    * Note: Order matters here.
    * @param  {[type]}  void [description]
    * @return {Promise}      [description]
    */
-  async middleware(): void {
+  async init(): void {
+    // MIDDLEWARE
+
     // Initialize body parser before routes or body will be undefined
     this.app.use(bodyParser.urlencoded({
       extended: true
@@ -116,19 +122,31 @@ export default class Server {
     this.app.use(bodyParser.json());
     this.app.use(flash({ unsafe: true }));
 
+    // Trace a single request process (including over async)
+    this.app.use(transactionMiddleware);
+
     // Configure Request logging
-    const loggingMiddleware = new LoggingMiddleware(this.config, this.logger);
-    loggingMiddleware.mount(this.app);
+    this.app.use(requestLogger);
 
     // Configure the Express Static middleware
-    const staticMiddleware = new StaticMiddleware(this.config, this.logger);
-    staticMiddleware.mount(this.app);
-
-    await this.initSwagger();
+    this.app.use(staticMiddleware());
 
     // Configure the request error handling
-    const errorMiddleware = new ErrorMiddleware(this.config, this.logger);
-    errorMiddleware.mount(this.app);
+    this.app.use(errorMiddleware);
+
+    // CONTROLLERS
+
+    // Setup the universal rendering handler
+    this.app.all('/app/*', renderHandler);
+
+    // Setup all swagger routes
+    await this.initSwagger();
+
+    // Redirect all traffic from root
+    this.app.all('/', redirectHandler);
+
+    // Send 404 if we get here in the route processing
+    this.app.all('*', notFoundError);
   }
 
   /**
@@ -149,8 +167,7 @@ export default class Server {
     };
 
     try {
-      // Mount middleware
-      await this.middleware();
+      await this.init();
       return (this.config.get('secure')) ? this.startHttps(cb) : this.startHttp(cb);
     } catch (e) {
       if (this.logger) {

@@ -7,7 +7,7 @@ npm-debug.log*
 pids
 *.pid
 *.seed
-dist/**
+dist
 .tmp
 .idea
 config/local.json

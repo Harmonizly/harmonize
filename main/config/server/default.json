@@ -2,11 +2,15 @@
   "loggers": {
     "handlers": [
       {
+        "name": "auth",
+        "level": "debug"
+      },
+      {
         "name": "root",
         "level": "debug"
       },
       {
-        "name": "auth",
+        "name": "request",
         "level": "debug"
       },
       {
@@ -16,15 +20,15 @@
     ],
     "streams": {}
   },
+  "assets": {
+    "staticRoot": "static"
+  },
   "server": {
+    "name": "harmonize",
     "backlog": 511,
     "hostname": "localhost",
     "port": 3000,
     "secure": false,
-    "assets": {
-      "cdn": "//s3.amazonaws.com/",
-      "staticRoot": "static"
-    },
     "ssl": {
       "key": "",
       "cert": "",
@@ -47,12 +51,12 @@
       "swagger_controllers": [
         {
           "onError": "json_error_handler"
-  	    },
+        },
         "swagger_params_parser",
-  	    "swagger_security",
-  	    "_swagger_validate",
-  	    "express_compatibility",
-  	    "_router"
+        "swagger_security",
+        "_swagger_validate",
+  		"express_compatibility",
+  		"_router"
       ],
       "swagger_raw": {
         "name": "swagger_raw"

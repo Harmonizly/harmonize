@@ -1,14 +1,14 @@
 {
   "plugins": [
     "syntax-flow",
-    "transform-flow-strip-types",
     "transform-decorators-legacy",
     [
       "module-resolver",
       {
         "alias": {
+          "client": "./src/client",
+          "configuration:": "./config",
           "server": "./src/server",
-          "services": "./src/services",
           "static": "./static",
           "test": "./test"
         }
@@ -24,6 +24,8 @@
       }
     ],
     "stage-0",
+    "flow",
+    "react"
   ],
   "sourceMaps": true,
   "ignore": [

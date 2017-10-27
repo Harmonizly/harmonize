@@ -1,10 +1,8 @@
-const webpack = require('webpack');
-const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const path = require('path');
+const webpack = require('webpack');
 
-// This is not particularly robust...
-const root = process.cwd();
-const appRoot = 'server';
+const cwd = process.cwd();
 
 const appCompiler = {
   target: 'node',
@@ -12,17 +10,16 @@ const appCompiler = {
   devtool: 'source-map',
   entry: [
     'babel-polyfill',
-    path.join(root, `src/${appRoot}/main.js`)
+    path.join(cwd, `src/server/main.js`)
   ],
   resolve: {
     modules: [
-      path.join(root, 'node_modules'),
-      path.join(root, 'static')
+      path.join(cwd, 'node_modules'),
+      path.join(cwd, 'static')
     ],
     alias: {
-      server: path.join(root, 'src/server'),
-      services: path.join(root, 'src/server/services'),
-      static: path.join(root, 'static')
+      configuration: path.join(cwd, 'config'),
+      static: path.join(cwd, 'static')
     },
     aliasFields: ['browser'],
     extensions: ['.json', '.js', '.min.js']
@@ -30,33 +27,23 @@ const appCompiler = {
   module: {
     rules: [
       {
-        test: /\.(html|ejs)$/,
-        use: 'html-loader'
+        test: /\.html$/,
+        use: 'html-loader',
+        exclude: /node_modules/
       },
       {
-        test: /\.(ico|gif|png|jpg|jpeg|svg|webp)$/,
-        use: [
-          {
-            loader: 'file?context=static&name=/[path][name].[ext]',
-            options: {
-              exclude: /node_modules/
-            }
-          }
-        ]
-      },
-      {
-        test: /\.js$/,
-        loader: 'babel-loader',
+        test: /\.jsx?$/,
+        use: 'babel-loader',
         exclude: /node_modules/
       },
       {
         test: /\.json$/,
-        loader: 'json-loader',
+        use: 'json-loader',
         exclude: /node_modules/
       },
       {
         test: /\.y(a)?ml$/,
-        loader: 'yml-loader',
+        use: 'yml-loader',
         exclude: /node_modules/
       }
     ],
@@ -64,20 +51,14 @@ const appCompiler = {
   },
   externals: [nodeExternals()],
   plugins: [
-    new webpack.EnvironmentPlugin({
-      DEBUG: false,
-      __CLIENT__: false,
-      __SERVER__: true,
-      __PRODUCTION__: false,
-      __DEV__: true
-    })
+    new webpack.optimize.ModuleConcatenationPlugin()
   ],
   output: {
     chunkFilename: '[name].[id].js',
     filename: 'index.js',
     library: 'Server',
     libraryTarget: 'commonjs-module',
-    path: path.join(root, `dist/${appRoot}`)
+    path: path.join(cwd, `dist/server/`)
   }
 };
 
