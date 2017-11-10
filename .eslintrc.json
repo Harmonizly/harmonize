@@ -45,6 +45,8 @@
       { "blankLine": "any",    "prev": [ "const", "let", "var" ], "next": [ "const", "let", "var" ] }
     ],
     "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
+    "react/jsx-filename-extension": "off",
+    "react/prefer-stateless-function": "off",
     "strict": "off"
   },
   "settings": {
