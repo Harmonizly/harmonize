@@ -1,4 +1,4 @@
-FROM bcwebb88/node-ami:latest
+FROM bcwebb88/nodejs-ami:latest
 
 ARG NODE_ENV
 
@@ -11,6 +11,6 @@ RUN yarn install
 RUN make all
 
 EXPOSE 80
-EXPOSE 8080
+EXPOSE 9615
 
 ENTRYPOINT ["yarn", "start"]

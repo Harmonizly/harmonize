@@ -11,11 +11,10 @@ const LOGGER: Object = Logger.get('root');
  * @return {[type]}            [description]
  */
 export function errorMiddleware(error: any, request: Object, response: Object, next: Function): void {
-
   LOGGER.info({
     method: request.method,
     url: request.url,
-    headers: request.headers
+    headers: request.headers,
   });
 
   if (!('status' in error)) {
@@ -29,7 +28,7 @@ export function errorMiddleware(error: any, request: Object, response: Object, n
   LOGGER.error(error);
   response.status(error.code).send(error);
   next();
-};
+}
 
 /**
  * [notFoundError description]
@@ -41,4 +40,4 @@ export function errorMiddleware(error: any, request: Object, response: Object, n
 export function notFoundError(request: Object, response: Object, next: Function): void {
   response.status(404).send();
   next();
-};
+}

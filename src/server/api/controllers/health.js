@@ -1,3 +1,7 @@
+import Logger from 'server/utils/logger';
+
+const LOGGER: Object = Logger.get('root');
+
 /**
  * [ping description]
  * @param  {[type]} request  [description]

@@ -6,7 +6,10 @@ import React from 'react';
  */
 export default class ContentContainer extends React.Component {
   static propTypes: Object = {
-    children: PropTypes.arrayOf(PropTypes.element).isRequired
+    children: PropTypes.oneOfType([
+      PropTypes.arrayOf(PropTypes.node),
+      PropTypes.node,
+    ]).isRequired,
   };
 
   /**

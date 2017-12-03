@@ -1,4 +1,4 @@
-import DefaultLayout from 'client/lib/layouts/default';
+import DefaultLayout from 'client/layouts/default';
 import React from 'react';
 
 /**

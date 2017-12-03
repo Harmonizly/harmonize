@@ -22,7 +22,7 @@ export default function transactionMiddleware(request: Object, response: Object,
   transaction.data = {
     id: transactionId,
     request,
-    response
+    response,
   };
 
   transaction.run(next);

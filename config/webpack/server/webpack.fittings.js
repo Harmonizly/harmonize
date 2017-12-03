@@ -4,26 +4,29 @@ const webpack = require('webpack');
 
 const cwd = process.cwd();
 
-const routerCompiler = {
+const WATCH = (process.env.NODE_ENV === 'development');
+
+module.exports = {
     target: 'node',
     devtool: 'source-map',
-    entry: [
-      "babel-polyfill",
-      path.join(cwd, 'src/server/router')
-    ],
+    watch: WATCH,
+    entry: {
+      'swagger_router': [
+        'babel-polyfill',
+        path.join(cwd, 'src/server/api/fittings/swagger_router')
+      ]
+    },
     resolve: {
       modules: [
         path.join(cwd, 'node_modules')
       ],
+      alias: {
+        server: path.join(cwd, 'src/server'),
+      },
       extensions: ['.json', '.js', '.min.js']
     },
     module: {
       rules: [
-        {
-          test: /\.html$/,
-          use: 'html-loader',
-          exclude: /node_modules/
-        },
         {
           test: /\.js$/,
           use: 'babel-loader',
@@ -33,14 +36,9 @@ const routerCompiler = {
       noParse: /\.min\.js/
     },
     externals: [ nodeExternals() ],
-    plugins: [
-      new webpack.optimize.ModuleConcatenationPlugin()
-    ],
     output: {
-      filename: 'router.js',
-      libraryTarget: "commonjs2",
+      filename: '[name].js',
+      libraryTarget: 'commonjs2',
       path: path.join(cwd, 'dist/fittings')
     }
 };
-
-module.exports = routerCompiler;

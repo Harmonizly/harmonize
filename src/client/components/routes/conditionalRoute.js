@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {
   Redirect,
-  Route
+  Route,
 } from 'react-router-dom';
 
 /**
@@ -15,7 +15,7 @@ export default class ConditionalRoute extends React.Component {
   static propTypes: Object = {
     condition: PropTypes.oneOfType([PropTypes.func, PropTypes.bool]).isRequired,
     satisfied: PropTypes.func.isRequired,
-    unsatisfied: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired
+    unsatisfied: PropTypes.oneOfType([PropTypes.func, PropTypes.string]).isRequired,
   };
 
   /**
@@ -37,7 +37,7 @@ export default class ConditionalRoute extends React.Component {
    */
   renderConditionalComponent(
     condition: boolean,
-    renderProps: Object
+    renderProps: Object,
   ): React$Element {
     return condition ?
       React.createElement(this.props.satisfied, renderProps) :

@@ -1,21 +1,14 @@
 import App from 'client/app';
+import appConfig from 'configuration/client/config.json';
+import es6Renderer from 'express-es6-template-engine';
 import Logger from 'server/utils/logger';
 import React from 'react';
 import template from 'static/index.html';
+
 import { StaticRouter as Router } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 
 const LOGGER: Object = Logger.get('root');
-
-/**
- * [redirectHandler description]
- * @param  {[type]} request  [description]
- * @param  {[type]} response [description]
- * @return {[type]}          [description]
- */
-export function redirectHandler(request: Object, response: Object): void {
-  return response.redirect('/app');
-}
 
 /**
  * [render description]
@@ -24,19 +17,19 @@ export function redirectHandler(request: Object, response: Object): void {
  * @return {[type]}          [description]
  */
 export function renderHandler(request: Object, response: Object): void {
-  // TODO build store server-side to hydrate app
-  const defaultStore: ?Object = null;
   const context: Object = {};
-  const markup: String = renderToString(
-    <Router basename="/app" location={request.url} context={context}>
-      <App store={defaultStore} />
-    </Router>
-  );
+  const markup: String = renderToString(<Router location={request.url} context={context}>
+    <App config={appConfig.config} store={appConfig.store} />
+                                        </Router>);
 
   if (context.url) {
     LOGGER.info(`redirecting to: ${context.url}`);
     return response.redirect(301, context.url);
   }
 
-  return response.render('index', { locals: { app: markup } });
+  console.log(template);
+  const html = es6Renderer(template, { locals: { app: markup } });
+
+  console.log(html);
+  return response.send(html);
 }

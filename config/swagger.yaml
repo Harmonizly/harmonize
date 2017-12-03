@@ -11,7 +11,7 @@ consumes:
   - application/json
 paths:
   '/ping':
-    x-swagger-router-controller: root
+    x-swagger-router-controller: health
     get:
       operationId: ping
       summary: Health check path

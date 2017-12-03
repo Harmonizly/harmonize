@@ -1,12 +1,33 @@
 {
-  "auth": {
-    "auth0": {
-      "domain": "harmonize.auth0.com",
-      "clientID": "bpoFOeoQ2M7xWlVng4yHm2JUecSZe2NE",
-      "redirectUri": "http://localhost:3000/callback",
-      "audience": "https://harmonize.auth0.com/userinfo",
-      "responseType": "token id_token",
-      "scope": "openid"
+  "config": {
+    "apis": {
+      "auth0": {
+        "domain": "harmonize.auth0.com",
+        "clientID": "bpoFOeoQ2M7xWlVng4yHm2JUecSZe2NE",
+        "redirectUri": "http://localhost:80/app/auth/callback",
+        "audience": "https://harmonize.auth0.com/userinfo",
+        "responseType": "token id_token",
+        "scope": "openid"
+      }
     }
+  },
+  "store": {
+    "account": {},
+    "auth": {
+      "authenticated": false,
+      "email_verified": false,
+      "email": "",
+      "username": "",
+      "clientID": "",
+      "updated_at": "",
+      "name": "",
+      "picture": "",
+      "user_id": "",
+      "nickname": "",
+      "identities": [],
+      "created_at": "",
+      "sub": ""
+    },
+    "store": {}
   }
 }

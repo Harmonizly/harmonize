@@ -1,0 +1,14 @@
+version: '3'
+services:
+  harmonize:
+    build:
+      context: .
+      args:
+        NODE_ENV: development
+    image: harmonize/harmonize:latest
+    ports:
+      - "80:80"
+      - "9615:9615"
+      - "9229:9229"
+    volumes:
+      - ".:/usr/local/src/harmonize/"

@@ -1,11 +1,21 @@
 import App from 'client/app';
 import React from 'react';
-import { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 
-render(
-  <Router basename="/app">
-    <App />
-  </Router>,
-  document.getElementById('harmonize')
-);
+const render = (Root) => {
+  ReactDOM.render(
+    <Router>
+      <Root />
+    </Router>,
+    document.getElementById('harmonize')
+  );
+}
+
+render(App);
+
+if (module && module.hot) {
+  module.hot.accept('./app.js', () => {
+    render(<App />);
+  })
+}

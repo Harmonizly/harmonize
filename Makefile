@@ -4,8 +4,6 @@ NODE_ENV?=development
 .PHONY: clean all test
 
 all:
-	$(MAKE) clean
-	$(MAKE) client
 	$(MAKE) server
 
 clean:
@@ -14,11 +12,8 @@ clean:
 test:
 	echo "No tests!"
 
-client:
-	$(CC) run webpack --config ./config/webpack/webpack.client.js
-
 server:
-	$(CC) run webpack --config ./config/webpack/webpack.server.js
+	$(CC) run webpack --config ./config/webpack/server/webpack.config.js
 
 docker:
 	docker build -t harmonize/harmonize:latest --build-arg NODE_ENV=$(NODE_ENV) .

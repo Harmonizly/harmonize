@@ -1,4 +1,4 @@
-import { DEFAULT_INITIAL_USER_STATE } from 'client/lib/constants';
+import { DEFAULT_USER_STATE } from 'client/lib/constants';
 
 /**
  * [description]
@@ -6,7 +6,7 @@ import { DEFAULT_INITIAL_USER_STATE } from 'client/lib/constants';
  * @param  {[type]} action [description]
  * @return {[type]}        [description]
  */
-export default function user(state: Object = DEFAULT_INITIAL_USER_STATE, action: Object): Object {
+export default function user(state: Object = DEFAULT_USER_STATE, action: Object): Object {
   switch (action.type) {
     default:
       return state;

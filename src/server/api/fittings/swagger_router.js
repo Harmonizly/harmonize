@@ -1,41 +1,42 @@
-'use strict';
-
 import debug from 'debug';
 import assert from 'assert';
 import util from 'util';
 
 // TODO make this configurable
-import * as controllers from 'server/controllers';
+import * as controllers from 'server/api/controllers';
 
 const SWAGGER_ROUTER_CONTROLLER = 'x-swagger-router-controller';
 const CONTROLLER_INTERFACE_TYPE = 'x-controller-interface';
 const allowedCtrlInterfaces = ['middleware', 'pipe', 'auto-detect'];
 
-module.exports = function create(def, bagpipes) {
+export default function create(def, bagpipes) {
   const fittingDef = def;
 
   debug('config: %j', fittingDef);
 
   if (!fittingDef.controllersInterface) fittingDef.controllersInterface = 'middleware';
-  assert(~allowedCtrlInterfaces.indexOf(fittingDef.controllersInterface),
+  assert(
+    ~allowedCtrlInterfaces.indexOf(fittingDef.controllersInterface),
     `value in swagger_router config.controllersInterface - can be one of \
-    ${allowedCtrlInterfaces} but got: ${fittingDef.controllersInterface}`
+    ${allowedCtrlInterfaces} but got: ${fittingDef.controllersInterface}`,
   );
 
-  const swaggerNodeRunner = bagpipes.config.swaggerNodeRunner;
+  const { swaggerNodeRunner } = bagpipes.config;
 
   swaggerNodeRunner.api.getOperations().forEach((op) => {
     const operation = op;
-    const interfaceType =
-      operation.controllerInterface =
-      operation.definition[CONTROLLER_INTERFACE_TYPE] ||
+    const interfaceType = operation.definition[CONTROLLER_INTERFACE_TYPE] ||
       operation.pathObject.definition[CONTROLLER_INTERFACE_TYPE] ||
       swaggerNodeRunner.api.definition[CONTROLLER_INTERFACE_TYPE] ||
       fittingDef.controllersInterface;
 
-    assert(~allowedCtrlInterfaces.indexOf(interfaceType),
+    operation.controllerInterface = interfaceType;
+
+    assert(
+      ~allowedCtrlInterfaces.indexOf(interfaceType),
       `whenever provided, value of ${CONTROLLER_INTERFACE_TYPE} directive in openapi doc must be one of \
-      ${allowedCtrlInterfaces} but got: ${interfaceType}`);
+      ${allowedCtrlInterfaces} but got: ${interfaceType}`,
+    );
   });
 
   const mockMode = !!fittingDef.mockMode || !!swaggerNodeRunner.config.swagger.mockMode;
@@ -46,7 +47,7 @@ module.exports = function create(def, bagpipes) {
 
     debug('exec');
 
-    const operation = context.request.swagger.operation;
+    const { operation } = context.request.swagger;
     const controllerName = operation[SWAGGER_ROUTER_CONTROLLER] || operation.pathObject[SWAGGER_ROUTER_CONTROLLER];
 
     let controller;
@@ -80,7 +81,7 @@ module.exports = function create(def, bagpipes) {
             "auto-detected interface-type for operation '%s' at [%s] as '%s'",
             operationId,
             operation.pathToDefinition,
-            operation.controllerInterface
+            operation.controllerInterface,
           );
         }
 
@@ -101,8 +102,8 @@ module.exports = function create(def, bagpipes) {
 
     if (mockMode) {
       const statusCode = parseInt(context.request.get('_mockreturnstatus'), 10) || 200;
-
       const mimetype = context.request.get('accept') || 'application/json';
+
       let mock = operation.getResponse(statusCode).getExample(mimetype);
 
       if (mock) {
@@ -121,4 +122,4 @@ module.exports = function create(def, bagpipes) {
     // for completeness, we should never actually get here
     return cb(new Error(util.format('No controller found for %s in %j', controllerName, controllers)));
   };
-};
+}

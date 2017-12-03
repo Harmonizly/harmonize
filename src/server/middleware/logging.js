@@ -10,8 +10,8 @@ export default function requestLogger(request: Object, response: Object, next: F
     message: {
       method: request.method,
       url: request.url,
-      headers: request.headers
-    }
+      headers: request.headers,
+    },
   });
   next();
-};
+}

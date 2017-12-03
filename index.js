@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === 'production') {
   global.newrelic = require('newrelic');
 }
 
-var Server = require('./dist/server/index').default;
+var Server = require('./dist/server').default;
 var server = new Server();
 
 server.start();

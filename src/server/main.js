@@ -1,22 +1,24 @@
 import bodyParser from 'body-parser';
 import config from 'config';
-import es6Renderer from 'express-es6-template-engine';
+import compression from 'compression';
+import cors from 'cors';
 import express from 'express';
+// import es6Renderer from 'express-es6-template-engine';
 import flash from 'connect-flash-plus';
 import fs from 'fs';
+import helmet from 'helmet';
 import https from 'https';
 import Logger from 'server/utils/logger';
 import requestLogger from 'server/middleware/logging';
 import process from 'process';
-import renderingEngine from 'express-es6-template-engine';
 import swagger from 'swagger-node-runner';
 import swaggerConfig from 'configuration/swagger.yaml';
 import SwaggerUi from 'swagger-tools/middleware/swagger-ui';
 import transactionMiddleware from 'server/middleware/transaction';
-import webpackMiddleware from 'server/middleware/webpack';
 
-import { redirectHandler, renderHandler } from 'server/controllers/app';
-import { errorMiddleware, notFoundError} from 'server/middleware/error';
+import { renderHandler } from 'server/api/controllers/render';
+import { errorMiddleware, notFoundError } from 'server/middleware/error';
+import { webpackDevMiddleware, webpackHotMiddleware } from 'server/middleware/webpack';
 
 /**
  * [app description]
@@ -35,41 +37,17 @@ export default class Server {
   constructor(): void {
     this.config = config.get('server');
 
-    try {
-      // Initialize the express server
-      this.app = express();
-      this.configure();
-    } catch (e) {
-      if (this.logger) {
-        this.logger.error(e);
-      } else {
-        /* eslint-disable no-console */
-        console.error(e);
-      }
-      this.destroy();
-      throw e;
-    }
-  }
-
-  /**
-   * [logger description]
-   * @type {[type]}
-   */
-  configure(): void {
+    // Initialize the express server
+    this.app = express();
     this.logger = Logger.get('root');
 
     // Catches ctrl+c event
-    this.boundSigIntHandler = ::this.sigIntHandler;
+    this.boundSigIntHandler = this.sigIntHandler.bind(this);
     process.on('SIGINT', this.boundSigIntHandler);
 
     // Catches uncaught exceptions
-    this.boundUncaughtExceptionHandler = ::this.unhandledExceptionHandler;
+    this.boundUncaughtExceptionHandler = this.unhandledExceptionHandler.bind(this);
     process.on('uncaughtException', this.boundUncaughtExceptionHandler);
-
-    // Setup the express rendering engine
-    this.app.engine('html', renderingEngine);
-    this.app.set('views', 'static');
-    this.app.set('view engine', 'html');
   }
 
   /**
@@ -79,6 +57,94 @@ export default class Server {
    */
   destroy(): void {
     this.removeEventListeners();
+    // TODO logger destroy
+    // TODO send destroy event?
+  }
+
+  /**
+   * Attach middleware & controllers to the Express app.
+   * Note: Order matters here.
+   * @param  {[type]}  void [description]
+   * @return {Promise}      [description]
+   */
+  async initialize(app: Object): void {
+    // this.initEngines(app);
+    this.initMiddleware(app);
+
+    await this.initControllers(app);
+  }
+
+  /**
+   * [initControllers description]
+   * @return {Promise} [description]
+   */
+  async initControllers(app: Object): void {
+    // CONTROLLERS
+
+    // Setup all swagger routes
+    await this.initSwagger();
+
+    // Setup the universal rendering handler
+    app.all('/', renderHandler);
+
+    // Send 404 if we get here in the route processing
+    app.all('*', notFoundError);
+  }
+
+  /**
+   * [initEngines description]
+   * @param  {[type]} void [description]
+   * @return {[type]}      [description]
+   */
+  // initEngines(app: Object): void {
+  //   // VIEW ENGINE
+  //   app.engine('html', es6Renderer);
+  //   app.set('views', 'static');
+  //   app.set('view engine', 'html');
+  // }
+
+  /**
+   * [initMiddleware description]
+   * @return {Promise} [description]
+   */
+  initMiddleware(app: Object): void {
+    // MIDDLEWARE
+
+    // Add common request security measures
+    app.use(helmet());
+
+    // Enabled CORS (corss-origin resource sharing)
+    app.use(cors());
+
+    // request compression
+    app.use(compression());
+
+    // Initialize body parser before routes or body will be undefined
+    app.use(bodyParser.urlencoded({
+      extended: true,
+    }));
+    app.use(bodyParser.json());
+    app.use(flash({ unsafe: true }));
+
+    // Trace a single request process (including over async)
+    app.use(transactionMiddleware);
+
+    // Configure Request logging
+    app.use(requestLogger);
+
+    if (process.env.NODE_ENV === 'development') {
+      app.use(webpackDevMiddleware);
+      app.use(webpackHotMiddleware);
+    }
+
+    // Configure the Express Static middleware
+    app.use(
+      this.config.assets.static.get('url'),
+      express.static(this.config.assets.static.get('path')),
+    );
+
+    // Configure the request error handling
+    app.use(errorMiddleware);
   }
 
   /**
@@ -91,10 +157,10 @@ export default class Server {
       swagger.create({
         appRoot: process.cwd(),
         swagger: swaggerConfig,
-        swaggerSecurityHandlers: {}
+        swaggerSecurityHandlers: {},
       }, (error: any, runner: Object): void => {
-
         if (error) {
+          console.error(error);
           return reject(error);
         }
 
@@ -105,58 +171,6 @@ export default class Server {
         return resolve();
       });
     });
-  }
-
-  /**
-   * Attach middleware & controllers to the Express app.
-   * Note: Order matters here.
-   * @param  {[type]}  void [description]
-   * @return {Promise}      [description]
-   */
-  async init(): void {
-    // TODO clean this method up
-    // VIEW ENGINE
-    this.app.engine('html', es6Renderer);
-    this.app.set('views', 'static');
-    this.app.set('view engine', 'html');
-
-    // MIDDLEWARE
-
-    // Initialize body parser before routes or body will be undefined
-    this.app.use(bodyParser.urlencoded({
-      extended: true
-    }));
-    this.app.use(bodyParser.json());
-    this.app.use(flash({ unsafe: true }));
-
-    // Trace a single request process (including over async)
-    this.app.use(transactionMiddleware);
-
-    // Configure Request logging
-    this.app.use(requestLogger);
-
-    // Configure the Express Static middleware
-    const assetsConfig: Object = this.config.get('assets');
-
-    this.app.use(assetsConfig.get('distUrl'), express.static(assetsConfig.get('distRoot')));
-    this.app.use(assetsConfig.get('staticUrl'), express.static(assetsConfig.get('staticRoot')));
-
-    // Configure the request error handling
-    this.app.use(errorMiddleware);
-
-    // CONTROLLERS
-
-    // Redirect all traffic from root
-    this.app.all('/', redirectHandler);
-
-    // Setup the universal rendering handler
-    this.app.all('/app', renderHandler);
-
-    // Setup all swagger routes
-    await this.initSwagger();
-
-    // Send 404 if we get here in the route processing
-    this.app.all('*', notFoundError);
   }
 
   /**
@@ -172,16 +186,12 @@ export default class Server {
       if (callback != null) {
         callback();
       }
-
-      process.send('ready');
-
-      const message = `Server listening at ${this.config.get('hostname')}:${this.config.get('port')}...`;
-
-      this.logger.info(message);
+      // process.send('ready');
+      this.logger.info(`Server listening at ${this.config.get('hostname')}:${this.config.get('port')}...`);
     };
 
     try {
-      await this.init();
+      await this.initialize(this.app);
       return (this.config.get('secure')) ? this.startHttps(cb) : this.startHttp(cb);
     } catch (e) {
       if (this.logger) {
@@ -201,7 +211,12 @@ export default class Server {
    * @return {[type]}      [description]
    */
   startHttp(callback: Function): void {
-    return this.app.listen(this.config.get('port'), this.config.get('hostname'), this.config.get('backlog'), callback);
+    return this.app.listen(
+      this.config.get('port'),
+      this.config.get('hostname'),
+      this.config.get('backlog'),
+      callback,
+    );
   }
 
   /**
@@ -214,19 +229,21 @@ export default class Server {
       if (request.secure) {
         return next();
       }
+
       return response.redirect(`https://${request.hostname}:${this.config.get('port')}${request.url}`);
     });
+
     const sslConfig = this.config.get('ssl');
     const httpsConfig = Object.assign({}, sslConfig, {
       key: fs.readFileSync(sslConfig.get('key')),
-      cert: fs.readFileSync(sslConfig.get('cert'))
+      cert: fs.readFileSync(sslConfig.get('cert')),
     });
 
     return https.createServer(httpsConfig, this.app).listen(
       this.config.get('port'),
       this.config.get('hostname'),
       this.config.get('backlog'),
-      callback
+      callback,
     );
   }
 

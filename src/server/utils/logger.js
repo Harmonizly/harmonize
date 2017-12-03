@@ -39,7 +39,7 @@ class LoggingSchema {
     code = -1,
     message = DEFAULT_MESSAGE,
     status = -1,
-    trace = []
+    trace = [],
   } = {}) {
     this.code = code;
     this.message = message;
@@ -56,7 +56,7 @@ class LoggingSchema {
       if (request.user) {
         this.user = {
           id: request.user.id,
-          username: request.user.username
+          username: request.user.username,
         };
       }
     }
@@ -76,7 +76,7 @@ class LoggingSchema {
       time: this.time,
       trace: this.trace,
       transactionId: this.transactionId,
-      user: this.user
+      user: this.user,
     };
   }
 }
@@ -207,8 +207,8 @@ export default class Logger {
         streams: [{
           level: 'error',
           type: 'raw',
-          stream: new NewRelicStream()
-        }]
+          stream: new NewRelicStream(),
+        }],
       });
     }
   }
@@ -229,7 +229,7 @@ export default class Logger {
         file: callSite.getFileName(),
         function: callSite.getFunctionName(),
         line: callSite.getLineNumber(),
-        method: callSite.getMethodName()
+        method: callSite.getMethodName(),
       });
     }
     return formatted;
@@ -294,7 +294,7 @@ export default class Logger {
         logger.addStream({
           name: 'cloudwatch',
           type: 'raw',
-          stream: createCWStream(Object.assign({}, streamConfig))
+          stream: createCWStream(Object.assign({}, streamConfig)),
         });
         break;
       default:

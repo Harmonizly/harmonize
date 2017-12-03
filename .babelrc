@@ -2,18 +2,7 @@
   "plugins": [
     "syntax-flow",
     "transform-decorators-legacy",
-    [
-      "module-resolver",
-      {
-        "alias": {
-          "client": "./src/client",
-          "configuration:": "./config",
-          "server": "./src/server",
-          "static": "./static",
-          "test": "./test"
-        }
-      }
-    ]
+    "react-hot-loader/babel",
   ],
   "presets": [
     [
@@ -25,15 +14,15 @@
     ],
     "stage-0",
     "flow",
-    "react"
+    "react",
   ],
   "sourceMaps": true,
   "ignore": [
-    "node_modules"
+    "node_modules",
   ],
   "env": {
     "test": {
-      "plugins": ["istanbul"]
+      "plugins": ["istanbul"],
     }
   }
 }

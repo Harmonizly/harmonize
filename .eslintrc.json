@@ -26,18 +26,15 @@
   ],
   "rules": {
     "arrow-body-style": [ "error", "always" ],
-    "comma-dangle": [ "error", "never" ],
+    "class-methods-use-this": "off",
     "flowtype/no-types-missing-file-annotation": "off",
     "func-names": [ "error", "as-needed" ],
     "import/extensions": "off",
-    "import/no-extraneous-dependencies": "off",
     "import/prefer-default-export": "off",
     "linebreak-style": "warn",
     "max-len": [ "error", 120, 2 ],
     "no-param-reassign": "error",
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
-    "no-restricted-syntax": 0,
-    "no-unused-expressions": 0,
     "chai-friendly/no-unused-expressions": 2,
     "padding-line-between-statements": [
       "error",
@@ -46,12 +43,13 @@
     ],
     "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
     "react/jsx-filename-extension": "off",
-    "react/prefer-stateless-function": "off",
-    "strict": "off"
+    "react/prefer-stateless-function": "off"
   },
   "settings": {
     "import/resolver": {
-      "babel-module": {}
+      "webpack": {
+        "config": "config/webpack/webpack.config.js"
+      }
     }
   }
 }

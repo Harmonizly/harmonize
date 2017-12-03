@@ -12,7 +12,7 @@ const error = function (e: any, response: Object): void {
     category: 'GeneralException',
     code: -1,
     message: (typeof e === 'string') ? e : 'An Unknown error occurred',
-    status
+    status,
   };
 
   if (typeof e === 'object') {

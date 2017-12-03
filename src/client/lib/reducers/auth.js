@@ -2,9 +2,9 @@ import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
   LOGOUT_SUCCESS,
-  LOGOUT_FAILURE
-} from 'client/lib/actions/auth/login';
-import { DEFAULT_INITIAL_AUTH_STATE } from 'client/lib/constants';
+  LOGOUT_FAILURE,
+  DEFAULT_AUTH_STATE,
+} from 'client/lib/constants';
 
 /**
  * [description]
@@ -12,27 +12,27 @@ import { DEFAULT_INITIAL_AUTH_STATE } from 'client/lib/constants';
  * @param  {[type]} action [description]
  * @return {[type]}        [description]
  */
-export default function auth(state: Object = DEFAULT_INITIAL_AUTH_STATE, action: Object): Object {
+export default function auth(state: Object = DEFAULT_AUTH_STATE, action: Object): Object {
   switch (action.type) {
     case LOGIN_SUCCESS:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case LOGIN_FAILURE:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case LOGOUT_SUCCESS:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     case LOGOUT_FAILURE:
       return {
         ...state,
-        ...action.payload
+        ...action.payload,
       };
     default:
       return state;

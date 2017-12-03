@@ -1,9 +1,15 @@
-const harmonize = {
+let harmonize = {
   name: 'harmonize',
   script: './index.js',
-  watch: true
 };
 
+if (process.env.NODE_ENV === 'development') {
+  harmonize = Object.assign(harmonize, {
+    node_args: ['--inspect=0.0.0.0:9229'],
+    watch: ['dist/server'],
+  });
+}
+
 module.exports = {
-  apps: [harmonize]
+  apps: [harmonize],
 };
