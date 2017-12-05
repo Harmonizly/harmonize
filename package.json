@@ -10,7 +10,10 @@
     "lint": "eslint ./src --fix",
     "start": "pm2-docker start process.config.js --web 9615"
   },
-  "@std/esm": { "esm": "all", "await": true },
+  "@std/esm": {
+    "esm": "all",
+    "await": true
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.1",
@@ -23,7 +26,6 @@
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "bagpipes": "git+https://github.com/gooftroop/bagpipes.git",
     "chai": "^4.1.2",
     "enzyme": "^3.1.0",
     "eslint": "^4.9.0",
@@ -44,10 +46,14 @@
     "nyc": "^11.2.1",
     "path-override-webpack-plugin": "^0.1.2",
     "react-hot-loader": "^3.1.3",
+    "responsive-loader": "^1.1.0",
+    "sharp": "^0.18.4",
     "sinon": "^4.0.2",
     "sinon-chai": "^2.14.0",
     "source-map-support": "^0.5.0",
     "supertest": "^3.0.0",
+    "svg-inline-loader": "^0.8.0",
+    "url-loader": "^0.6.2",
     "webpack-node-externals": "^1.6.0",
     "yml-loader": "^2.1.0"
   },
@@ -65,8 +71,8 @@
     "core-decorators": "^0.20.0",
     "cors": "^2.8.4",
     "debug": "^3.1.0",
+    "ejs": "^2.5.7",
     "express": "^4.16.2",
-    "express-es6-template-engine": "^2.0.2",
     "helmet": "^3.9.0",
     "pm2": "^2.7.2",
     "prop-types": "^15.6.0",
@@ -81,7 +87,6 @@
     "redux-observable": "^0.16.0",
     "rxjs": "^5.5.2",
     "semantic-ui-react": "^0.75.1",
-    "sleep": "^5.1.1",
     "stack-trace": "^0.0.10",
     "swagger": "^0.7.5",
     "swagger-node-runner": "^0.7.3",

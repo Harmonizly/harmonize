@@ -3,7 +3,6 @@ import config from 'config';
 import compression from 'compression';
 import cors from 'cors';
 import express from 'express';
-// import es6Renderer from 'express-es6-template-engine';
 import flash from 'connect-flash-plus';
 import fs from 'fs';
 import helmet from 'helmet';
@@ -15,6 +14,8 @@ import swagger from 'swagger-node-runner';
 import swaggerConfig from 'configuration/swagger.yaml';
 import SwaggerUi from 'swagger-tools/middleware/swagger-ui';
 import transactionMiddleware from 'server/middleware/transaction';
+
+import * as swaggerSecurityHandler from 'server/api/security';
 
 import { renderHandler } from 'server/api/controllers/render';
 import { errorMiddleware, notFoundError } from 'server/middleware/error';
@@ -68,9 +69,7 @@ export default class Server {
    * @return {Promise}      [description]
    */
   async initialize(app: Object): void {
-    // this.initEngines(app);
     this.initMiddleware(app);
-
     await this.initControllers(app);
   }
 
@@ -90,18 +89,6 @@ export default class Server {
     // Send 404 if we get here in the route processing
     app.all('*', notFoundError);
   }
-
-  /**
-   * [initEngines description]
-   * @param  {[type]} void [description]
-   * @return {[type]}      [description]
-   */
-  // initEngines(app: Object): void {
-  //   // VIEW ENGINE
-  //   app.engine('html', es6Renderer);
-  //   app.set('views', 'static');
-  //   app.set('view engine', 'html');
-  // }
 
   /**
    * [initMiddleware description]
@@ -132,16 +119,18 @@ export default class Server {
     // Configure Request logging
     app.use(requestLogger);
 
+    // If we're in development, use webpack middleware to serve client assets.
+    // Otherwise, configure the Express Static middleware
     if (process.env.NODE_ENV === 'development') {
+      this.logger.info('In development mode. Using webpack dev middleware...');
       app.use(webpackDevMiddleware);
       app.use(webpackHotMiddleware);
+    } else {
+      app.use(
+        this.config.assets.get('url'),
+        express.static(this.config.assets.get('path')),
+      );
     }
-
-    // Configure the Express Static middleware
-    app.use(
-      this.config.assets.static.get('url'),
-      express.static(this.config.assets.static.get('path')),
-    );
 
     // Configure the request error handling
     app.use(errorMiddleware);
@@ -157,10 +146,9 @@ export default class Server {
       swagger.create({
         appRoot: process.cwd(),
         swagger: swaggerConfig,
-        swaggerSecurityHandlers: {},
+        swaggerSecurityHandlers: swaggerSecurityHandler,
       }, (error: any, runner: Object): void => {
         if (error) {
-          console.error(error);
           return reject(error);
         }
 

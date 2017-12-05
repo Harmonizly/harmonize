@@ -14,10 +14,8 @@
   },
   "server": {
     "assets": {
-      "static": {
-        "path": "static",
-        "url": "/static"
-      }
+      "path": "./dist",
+      "url": "/dist"
     },
     "name": "harmonize",
     "backlog": 511,

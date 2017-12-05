@@ -13,19 +13,11 @@ export const webpackDevMiddleware: Function = wdm(compiler, {
   noInfo: false,
   quiet: false,
   lazy: false,
-  watchOptions: {
-    aggregateTimeout: 300,
-    poll: true,
-  },
-  publicPath: process.env.ASSET_PATH,
-  index: 'static/index.html',
-  headers: { 'X-Custom-Header': 'yes' },
-  mimeTypes: { 'text/html': ['phtml'] },
-  stats: {
-    colors: true,
-  },
+  publicPath: config.output.publicPath,
+  index: `${process.env.ASSET_PATH}/index.html`,
+  stats: config.stats || { colors: true },
   reporter: null,
-  serverSideRender: true,
+  serverSideRender: false,
 });
 
 /**

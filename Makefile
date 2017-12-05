@@ -4,6 +4,7 @@ NODE_ENV?=development
 .PHONY: clean all test
 
 all:
+	$(MAKE) clean
 	$(MAKE) server
 
 clean:
