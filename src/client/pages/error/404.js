@@ -1,5 +1,7 @@
 import React from 'react';
 
+import DefaultLayout from 'client/layouts/default';
+
 /**
  *
  */
@@ -8,6 +10,10 @@ export default class NotFoundPage extends React.Component {
    *
    */
   render(): React$Element {
-    return (<div>Not Found!</div>);
+    return (
+      <DefaultLayout>
+        Not found!
+      </DefaultLayout>
+    );
   }
 }

@@ -7,9 +7,9 @@ const webpack = require('webpack');
 const cwd = process.cwd();
 
 // For dynamic public paths: https://webpack.js.org/guides/public-path/
-const ASSET_URL = process.env.ASSET_URL || '/dist';
-const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'static');
-const BUILD_PATH = process.env.BUILD_PATH || path.resolve(cwd, 'dist');
+const ASSET_URL = process.env.ASSET_URL || '/assets';
+const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'assets');
+const STATIC_PATH = process.env.STATIC_PATH || path.resolve(cwd, 'static');
 const WATCH = (process.env.NODE_ENV === 'development');
 
 const serverCompiler = {
@@ -26,13 +26,13 @@ const serverCompiler = {
   resolve: {
     modules: [
       path.join(cwd, 'node_modules'),
-      ASSET_PATH,
+      path.join(cwd, 'static'),
     ],
     alias: {
       client: path.join(cwd, 'src/client'),
       configuration: path.join(cwd, 'config'),
       server: path.join(cwd, 'src/server'),
-      static: ASSET_PATH,
+      static: path.join(cwd, 'static'),
       test: path.join(cwd, 'test'),
     },
     extensions: ['.json', '.js', '.min.js'],
@@ -85,14 +85,8 @@ const serverCompiler = {
     new webpack.DefinePlugin({
       'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
       'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
-      'process.env.BUILD_PATH': JSON.stringify(BUILD_PATH)
+      'process.env.STATIC_PATH': JSON.stringify(STATIC_PATH)
     }),
-    // new HtmlWebpackPlugin({
-    //   filename: path.resolve(BUILD_PATH, 'index.html'),
-    //   template: path.resolve(cwd, 'static/index.ejs'),
-    //   excludeChunks: ['server']
-    // }),
-    // new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.NamedModulesPlugin(),
   ],
@@ -101,7 +95,7 @@ const serverCompiler = {
     filename: '[name].js',
     library: 'Server',
     libraryTarget: 'commonjs-module',
-    path: BUILD_PATH,
+    path: ASSET_PATH,
     publicPath: ASSET_URL,
   }
 };

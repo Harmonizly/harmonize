@@ -10,3 +10,14 @@ export default combineReducers({
   auth,
   user
 });
+
+// function combineReducers(state: Object, action: Object): Object {
+//   console.log(`Incoming state is: ${JSON.stringify(state)}`);
+//   return {
+//     account: account(state.account, action),
+//     auth: account(state.auth, action),
+//     user: account(state.user, action),
+//   }
+// };
+//
+// export default combineReducers;

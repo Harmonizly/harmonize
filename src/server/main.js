@@ -117,6 +117,7 @@ export default class Server {
     app.use(transactionMiddleware);
 
     // Configure Request logging
+    // TODO switch to morgan
     app.use(requestLogger);
 
     // If we're in development, use webpack middleware to serve client assets.

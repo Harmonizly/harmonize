@@ -29,6 +29,7 @@
     "class-methods-use-this": "off",
     "flowtype/no-types-missing-file-annotation": "off",
     "func-names": [ "error", "as-needed" ],
+    "function-paren-newline": "off",
     "import/extensions": "off",
     "import/prefer-default-export": "off",
     "linebreak-style": "warn",

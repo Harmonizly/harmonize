@@ -6,9 +6,9 @@ const webpack = require('webpack');
 const cwd = process.cwd();
 
 // For dynamic public paths: https://webpack.js.org/guides/public-path/
-const ASSET_URL = process.env.ASSET_URL || '/dist';
-const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'static');
-const BUILD_PATH = process.env.BUILD_PATH || path.resolve(cwd, 'dist');
+const ASSET_URL = process.env.ASSET_URL || '/assets';
+const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'assets');
+const STATIC_PATH = process.env.STATIC_PATH || path.resolve(cwd, 'static');
 
 module.exports = {
   target: 'web',
@@ -25,11 +25,11 @@ module.exports = {
   resolve: {
     modules: [
       path.join(cwd, 'node_modules'),
-      ASSET_PATH,
+      path.join(cwd, 'static'),
     ],
     alias: {
       client: path.join(cwd, 'src/client'),
-      static: ASSET_PATH,
+      static: path.join(cwd, 'static'),
     },
     extensions: ['.json', '.js', '.min.js'],
   },
@@ -64,7 +64,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
       'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
-      'process.env.BUILD_PATH': JSON.stringify(BUILD_PATH)
+      'process.env.STATIC_PATH': JSON.stringify(STATIC_PATH)
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
@@ -73,7 +73,7 @@ module.exports = {
   output: {
     chunkFilename: '[name].[id].js',
     filename: '[name].js',
-    path: BUILD_PATH,
+    path: ASSET_PATH,
     publicPath: ASSET_URL,
   }
 };

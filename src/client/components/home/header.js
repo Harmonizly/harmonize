@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import { autobind } from 'core-decorators';
-import { Button } from 'semantic-ui-react';
+import { Button, Segment } from 'semantic-ui-react';
 
 /**
  *
@@ -21,9 +22,16 @@ export default class HeaderComponent extends React.Component {
    */
   render(): React$Element {
     return (
-      <div>
-        <Button onClick={this.login}>Login</Button>
-      </div>
+      <Segment
+        padded
+        basic
+        inverted
+        color="blue"
+        className="header"
+        as="section"
+      >
+        <Button size="small" primary onClick={this.login}>Login</Button>
+      </Segment>
     );
   }
 }

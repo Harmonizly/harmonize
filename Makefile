@@ -8,7 +8,7 @@ all:
 	$(MAKE) server
 
 clean:
-	rm -rf dist
+	rm -rf assets
 
 test:
 	echo "No tests!"

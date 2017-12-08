@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 
-import { Container } from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 
 /**
  *
  */
-export default class ContentContainer extends React.Component {
+export default class WrapperContainer extends React.Component {
   static propTypes: Object = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
@@ -19,9 +19,9 @@ export default class ContentContainer extends React.Component {
    */
   render(): React$Element {
     return (
-      <Container className="fill content">
+      <Segment basic className="collapsed fill wrapper" >
         {this.props.children}
-      </Container>
+      </Segment>
     );
   }
 }

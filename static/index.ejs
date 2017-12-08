@@ -29,9 +29,16 @@
 
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+
+    <script>
+      window.__CONFIG__ = <%- JSON.stringify(config) %>;
+      window.__INITIAL_STATE__ = <%- JSON.stringify(store) %>;
+    </script>
   </head>
-  <body id="harmonize">
-    <%- app %>
+  <body>
+    <div id="harmonize">
+      <%- app %>
+    </div>
     <script type="text/javascript" src="${process.env.ASSET_URL}/client.js"></script>
   </body>
 </html>

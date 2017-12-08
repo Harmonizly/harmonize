@@ -7,6 +7,7 @@ import stackTrace from 'stack-trace';
 import uuidv4 from 'uuid/v4';
 
 const DEFAULT_MESSAGE: string = 'This is not the message you are looking for';
+const SERVER_CONFIG: Object = config.get('server');
 
 // eslint-disable-next-line
 let instance: ?Logger = null;
@@ -16,7 +17,7 @@ let instance: ?Logger = null;
  * @type {[type]}
  */
 class LoggingSchema {
-  app: string = config.get('server').appName;
+  app: string = SERVER_CONFIG.name;
   code: number;
   message: string;
   sessionId: string;
@@ -163,7 +164,7 @@ export default class Logger {
    */
   constructor(): Object {
     if (instance == null) {
-      this.init(config.get('loggers'));
+      this.init(SERVER_CONFIG.get('loggers'));
       instance = this;
     }
     return instance;
@@ -203,7 +204,7 @@ export default class Logger {
     // Enable forwarding logged errors to Newrelic Reporting if the server is in a production environment
     if (process.env.NODE_ENV === 'production') {
       bunyan.createLogger({
-        name: config.get('server').appName,
+        name: SERVER_CONFIG.name,
         streams: [{
           level: 'error',
           type: 'raw',

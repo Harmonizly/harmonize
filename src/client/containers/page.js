@@ -1,4 +1,3 @@
-import HeaderComponent from 'client/components/header';
 import PropTypes from 'prop-types';
 import React from 'react';
 
@@ -18,9 +17,8 @@ export default class PageContainer extends React.Component {
    */
   render(): React$Element {
     return (
-      <div>
-        <HeaderComponent />
-        { this.props.children }
+      <div className="fill page">
+        {this.props.children}
       </div>
     );
   }

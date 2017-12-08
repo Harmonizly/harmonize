@@ -1,30 +1,39 @@
 import 'rxjs';
 
-import createStore from 'client/lib/store';
 import DevTools from 'client/containers/devtools';
 import PropTypes from 'prop-types';
 import React from 'react';
 import Routes from 'client/lib/routes';
 
-import { DEFAULT_ENV } from 'client/lib/constants';
-import { Provider } from 'react-redux';
+import { injectGlobal } from 'emotion';
+import { Sidebar, Segment } from 'semantic-ui-react'
+
+injectGlobal`
+
+  #harmonize {
+    height: 100%;
+  }
+
+  .collapsed {
+    padding: 0 !important;
+  }
+
+  .fill {
+    height: 100%;
+    width: 100%;
+  }
+`;
 
 /**
  * [store description]
  * @type {Object}
  */
 export default class App extends React.Component {
-  static childContextTypes: Object = {
-    apis: PropTypes.object,
-  };
-
   static propTypes: Object = {
     config: PropTypes.object.isRequired,
-    store: PropTypes.object.isRequired,
   };
 
-  env: string;
-  store: Object;
+  config: Object = {};
 
   /**
    * [props description]
@@ -32,16 +41,7 @@ export default class App extends React.Component {
    */
   constructor(props: Object, context: Object): void {
     super(props, context);
-    this.env = this.getCurrentEnvironment();
-    this.store = createStore(this.props.store, this.env);
-  }
-
-  /**
-   * [store description]
-   * @type {Object}
-   */
-  getCurrentEnvironment(): string {
-    return process.env.NODE_ENV || DEFAULT_ENV;
+    this.config = { ...props.config };
   }
 
   /**
@@ -49,9 +49,7 @@ export default class App extends React.Component {
    * @type {[type]}
    */
   renderDevtools(): ?React$Element {
-    return (this.env === 'development') ?
-      (<DevTools />) :
-      null;
+    return (this.config.env === 'development') ? (<DevTools />) : null;
   }
 
   /**
@@ -60,12 +58,12 @@ export default class App extends React.Component {
    */
   render(): React$Element {
     return (
-      <Provider store={this.store}>
-        <div className="wrapper" >
+      <Sidebar.Pushable as={Segment}>
+        <Sidebar.Pusher className="fill">
           <Routes />
           { this.renderDevtools() }
-        </div>
-      </Provider>
+        </Sidebar.Pusher>
+      </Sidebar.Pushable>
     );
   }
 }

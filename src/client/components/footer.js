@@ -8,6 +8,6 @@ export default class FooterComponent extends React.Component {
    *
    */
   render(): React$Element {
-    return <div />;
+    return <div className="footer" />;
   }
 }
