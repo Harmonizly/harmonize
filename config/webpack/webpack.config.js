@@ -1,7 +1,7 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 // const PathOverridePlugin = require('path-override-webpack-plugin');
-const fittingsCompiler = require('./webpack.fittings.js');
+const fittingsCompiler = require('./webpack.fittings.config.js');
 const webpack = require('webpack');
 
 const cwd = process.cwd();
@@ -33,7 +33,7 @@ const serverCompiler = {
       configuration: path.join(cwd, 'config'),
       server: path.join(cwd, 'src/server'),
       static: path.join(cwd, 'static'),
-      test: path.join(cwd, 'test'),
+      tests: path.join(cwd, 'tests'),
     },
     extensions: ['.json', '.js', '.min.js'],
   },

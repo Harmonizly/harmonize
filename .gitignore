@@ -8,6 +8,8 @@ pids
 *.pid
 *.seed
 dist
+assets
+shippable
 .tmp
 .idea
 config/local.json

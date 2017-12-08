@@ -129,7 +129,7 @@ module.exports = {
 
 /***/ }),
 
-/***/ "./config/webpack/client/webpack.config.js":
+/***/ "./config/webpack/webpack.client.config.js":
 /***/ (function(module, exports, __webpack_require__) {
 
 const nodeExternals = __webpack_require__("webpack-node-externals");
@@ -2737,13 +2737,13 @@ var _temp = function () {
 exports.__esModule = true;
 exports.webpackHotMiddleware = exports.webpackDevMiddleware = undefined;
 
-var _webpack = __webpack_require__("./config/webpack/client/webpack.config.js");
+var _webpackClient = __webpack_require__("./config/webpack/webpack.client.config.js");
+
+var _webpackClient2 = _interopRequireDefault(_webpackClient);
+
+var _webpack = __webpack_require__("webpack");
 
 var _webpack2 = _interopRequireDefault(_webpack);
-
-var _webpack3 = __webpack_require__("webpack");
-
-var _webpack4 = _interopRequireDefault(_webpack3);
 
 var _webpackDevMiddleware = __webpack_require__("webpack-dev-middleware");
 
@@ -2755,7 +2755,7 @@ var _webpackHotMiddleware2 = _interopRequireDefault(_webpackHotMiddleware);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var compiler = (0, _webpack4.default)(_webpack2.default);
+var compiler = (0, _webpack2.default)(_webpackClient2.default);
 
 /**
  * [noInfo description]
@@ -2765,9 +2765,9 @@ var webpackDevMiddleware = exports.webpackDevMiddleware = (0, _webpackDevMiddlew
   noInfo: false,
   quiet: false,
   lazy: false,
-  publicPath: _webpack2.default.output.publicPath,
+  publicPath: _webpackClient2.default.output.publicPath,
   index: "/Users/gooftroop/Development/harmonize/assets" + '/index.html',
-  stats: _webpack2.default.stats || { colors: true },
+  stats: _webpackClient2.default.stats || { colors: true },
   reporter: null,
   serverSideRender: false
 });

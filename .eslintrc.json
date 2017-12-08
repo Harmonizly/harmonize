@@ -4,17 +4,8 @@
     "plugin:flowtype/recommended"
   ],
   "globals": {
-    "define": true,
     "document": true,
-    "require": true,
-    "window": true,
-    "requirejs": true,
-    "it": true,
-    "before": true,
-    "after": true,
-    "beforeEach": true,
-    "afterEach": true,
-    "describe": true
+    "window": true
   },
   "parser": "babel-eslint",
   "parserOptions": {
