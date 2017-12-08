@@ -26,8 +26,7 @@ integrations:
 
   # http://docs.shippable.com/ci/shippableyml/#notifications
   notifications:
-  # turning of email for PR builds, get notified only on failure and change in status
-  # http://docs.shippable.com/integrations/notifications/email/
+  # http://docs.shippable.com/integrations/notifications/
     - integrationName: slack
       type: slack
       recipients:
