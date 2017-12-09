@@ -12,7 +12,7 @@ export default class HeaderComponent extends React.Component {
    */
   render(): React$Element {
     return (
-      <Segment padded basic className="header" as="section" />
+      <Segment basic color="blue" className="header" as="section" />
     );
   }
 }

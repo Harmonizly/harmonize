@@ -22,15 +22,8 @@ export default class HeaderComponent extends React.Component {
    */
   render(): React$Element {
     return (
-      <Segment
-        padded
-        basic
-        inverted
-        color="blue"
-        className="header"
-        as="section"
-      >
-        <Button size="small" primary onClick={this.login}>Login</Button>
+      <Segment basic inverted color="blue" className="header" as="section" >
+        <Button size="tiny" primary onClick={this.login}>Login</Button>
       </Segment>
     );
   }

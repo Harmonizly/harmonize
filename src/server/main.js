@@ -1,3 +1,4 @@
+import auth0 from 'server/middleware/auth';
 import bodyParser from 'body-parser';
 import config from 'config';
 import compression from 'compression';
@@ -68,8 +69,8 @@ export default class Server {
    * @param  {[type]}  void [description]
    * @return {Promise}      [description]
    */
-  async initialize(app: Object): void {
-    this.initMiddleware(app);
+  async initialize(app: Object, conf: Object): void {
+    this.initMiddleware(app, conf);
     await this.initControllers(app);
   }
 
@@ -94,7 +95,7 @@ export default class Server {
    * [initMiddleware description]
    * @return {Promise} [description]
    */
-  initMiddleware(app: Object): void {
+  initMiddleware(app: Object, conf: Object): void {
     // MIDDLEWARE
 
     // Add common request security measures
@@ -107,10 +108,10 @@ export default class Server {
     app.use(compression());
 
     // Initialize body parser before routes or body will be undefined
-    app.use(bodyParser.urlencoded({
-      extended: true,
-    }));
+    app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
+
+    // Setup flash messaging
     app.use(flash({ unsafe: true }));
 
     // Trace a single request process (including over async)
@@ -120,6 +121,9 @@ export default class Server {
     // TODO switch to morgan
     app.use(requestLogger);
 
+    // Hook up auth0/passport
+    auth0(app, conf);
+
     // If we're in development, use webpack middleware to serve client assets.
     // Otherwise, configure the Express Static middleware
     if (process.env.NODE_ENV === 'development') {
@@ -128,8 +132,8 @@ export default class Server {
       app.use(webpackHotMiddleware);
     } else {
       app.use(
-        this.config.assets.get('url'),
-        express.static(this.config.assets.get('path')),
+        conf.assets.get('url'),
+        express.static(conf.assets.get('path')),
       );
     }
 
@@ -180,7 +184,7 @@ export default class Server {
     };
 
     try {
-      await this.initialize(this.app);
+      await this.initialize(this.app, this.config);
       return (this.config.get('secure')) ? this.startHttps(cb) : this.startHttp(cb);
     } catch (e) {
       if (this.logger) {

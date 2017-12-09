@@ -3,7 +3,7 @@
     "config": {},
     "store": {
       "account": {},
-      "auth": {
+      "auth0": {
         "authenticated": false,
         "email_verified": false,
         "email": "",
