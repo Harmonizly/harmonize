@@ -2,7 +2,6 @@ import bunyan from 'bunyan';
 import config from 'config';
 import createCWStream from 'bunyan-cloudwatch';
 import process from 'process';
-import NewRelicStream from 'bunyan-newrelic-stream';
 import stackTrace from 'stack-trace';
 import uuidv4 from 'uuid/v4';
 

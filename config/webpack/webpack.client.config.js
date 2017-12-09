@@ -1,6 +1,5 @@
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
-// const PathOverridePlugin = require('path-override-webpack-plugin');
 const webpack = require('webpack');
 
 const cwd = process.cwd();
