@@ -16,8 +16,9 @@ jobs:
       script:
       - yarn test
 stages:
-- install
-- test
+  - install yarn
+  - install
+  - test
 notifications:
   slack:
     secure: HCUjxX88zhnFG37h4s3JAq06egpnNgU6pHfERjTXjPjIpX65XCFgDdRI2QXzEvJ9nYPHIoa41eVgoXoVzg8xojKxAHShLogBumP0XPvczsDvwDZve5BjdqmcDYCcxd/6vwPofvrMs1P/IJwUVkJqWDwx7OJCsg8Kq6mls394P3nc+ReaLQn/cnNcivU5rvkjVhKzAdI1+goDvR7IjUokX+XR8tJg2wiGN/JgC+m8ImBDlEmpoyf6CSSXNk6HlarzA+kkymTiTJy9tTMbrP4FAvUegyiyEgz+8GwAw7LTb4eT3zVMbMVUlfgJeYlD3UL4/r+BYJp2Xv7Oa2Tq2VeAQcZLcVz41r0vg1Sn/dJw6pHliDay3GI8YcgC5J4GUy8yvaENpEpJMKe8gs/aHpWaFW71bY+V5q0U2BqQT983nsVbmH73vzIbJD7bjwzAyXhGZdudh4dvicD63aG28FSbOviVZ8+7gdUDT6Efi60THB2+BUxwyM9Fm36nuOi8P8dtBSDV6P8Arjh1FnHIZ8vAp7HGjxhq6eWXtKSkHVL/0O0CKwgoabqbnC6vm5NV1O9jsjUU5QS4geer0LvKfMze7h7QwnmaGrlMDtIhpZWh/IJkNA5PauTXH68d/pSNx46U9Pp0FkgwNPi47lmzJf13UNB1F2TxXoIV4Gg42a1BMgE=
