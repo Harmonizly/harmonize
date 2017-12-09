@@ -5,12 +5,16 @@ node_js: lts/*
 cache: yarn
 jobs:
   include:
-  - stage: install
-    script:
-    - yarn install
-  - stage: test
-    script:
-    - yarn test
+    - stage: install yarn
+      script:
+        - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.3.2
+        - export PATH=$HOME/.yarn/bin:$PATH
+    - stage: install dependencies
+      script:
+      - yarn install
+    - stage: test
+      script:
+      - yarn test
 stages:
 - install
 - test
