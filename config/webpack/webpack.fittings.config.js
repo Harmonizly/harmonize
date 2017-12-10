@@ -44,6 +44,6 @@ module.exports = {
   output: {
     filename: '[name].js',
     libraryTarget: 'commonjs2',
-    path: path.join(cwd, 'dist/fittings'),
+    path: path.join(cwd, 'assets/fittings'),
   },
 };
