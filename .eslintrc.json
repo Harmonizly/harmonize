@@ -25,6 +25,7 @@
     "import/prefer-default-export": "off",
     "linebreak-style": "warn",
     "max-len": [ "error", 120, 2 ],
+    "no-debugger": "off",
     "no-param-reassign": "error",
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
     "chai-friendly/no-unused-expressions": 2,
@@ -35,7 +36,43 @@
     ],
     "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
     "react/jsx-filename-extension": "off",
-    "react/prefer-stateless-function": "off"
+    "react/prefer-stateless-function": "off",
+    "react/sort-comp": [ "warn", {
+      "order": [
+        "statics",
+        "propTypes",
+        "contextTypes",
+        "childContextTypes",
+        "state",
+        "instance-variables",
+        "displayName",
+        "mixins",
+        "defaultProps",
+        "constructor",
+        "static-methods",
+        "lifecycle",
+        "everything-else",
+        "rendering"
+      ],
+      "groups": {
+        "lifecycle": [
+          "getDefaultProps",
+          "getInitialState",
+          "getChildContext",
+          "componentWillMount",
+          "componentDidMount",
+          "componentWillReceiveProps",
+          "shouldComponentUpdate",
+          "componentWillUpdate",
+          "componentDidUpdate",
+          "componentWillUnmount"
+        ],
+        "rendering": [
+          "render",
+          "/^render.+$/"
+        ]
+      }
+    }]
   },
   "settings": {
     "import/resolver": {

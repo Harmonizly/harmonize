@@ -2,7 +2,7 @@
   "plugins": [
     "syntax-flow",
     "transform-decorators-legacy",
-    "react-hot-loader/babel",
+    "react-hot-loader/babel"
   ],
   "presets": [
     [
@@ -14,15 +14,15 @@
     ],
     "stage-0",
     "flow",
-    "react",
+    "react"
   ],
   "sourceMaps": true,
   "ignore": [
-    "node_modules",
+    "node_modules"
   ],
   "env": {
     "test": {
-      "plugins": ["istanbul"],
+      "plugins": ["istanbul"]
     }
   }
 }

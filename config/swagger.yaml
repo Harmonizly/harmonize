@@ -3,18 +3,38 @@ info:
   title: Harmonize Web Application
   description: Connect, do, and harominze your life
   version: 1.0.0
-host: localhost:3000
+host: app.harmonize.local
+basePath: /api/v1
 schemes:
   - http
   - https
 consumes:
   - application/json
 paths:
+  '/':
+    # TODO protect with API key
+    x-swagger-router-controller: meta
+    get:
+      operationId: describe
+      summary: Returns the swagger description of the API
+      produces:
+        - text/plain; charset=utf-8
+      responses:
+        200:
+          description: Success
+          schema:
+            type: string
+        default:
+          description: Processing error
+          schema:
+            $ref: '#/definitions/Error'
   '/ping':
     x-swagger-router-controller: health
     get:
       operationId: ping
       summary: Health check path
+      produces:
+        - text/plain; charset=utf-8
       responses:
         200:
           description: The server is alive

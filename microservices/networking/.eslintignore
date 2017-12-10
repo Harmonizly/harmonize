@@ -1,7 +1,0 @@
-config/*
-dist/*
-build/*
-logs/*
-static/*
-admin/*
-index.js

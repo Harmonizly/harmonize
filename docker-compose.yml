@@ -1,14 +1,31 @@
 version: '3'
 services:
-  harmonize:
+  app.harmonize:
     build:
       context: .
       args:
         NODE_ENV: development
     image: harmonize/harmonize:latest
+    hostname: app.harmonize.local
     ports:
-      - "80:80"
+      - "3000:3000"
+      - "9615:9615"
+      - "9229:9229"
+    depends_on:
+      - auth.harmonize
+    volumes:
+      - ".:/usr/local/src/harmonize/"
+  auth.harmonize:
+    build:
+      context: "../auth"
+      args:
+        NODE_ENV: development
+    image: harmonize/harmonize:latest
+    hostname: auth.harmonize.local
+    ports:
+      - "8080:3000"
       - "9615:9615"
       - "9229:9229"
     volumes:
-      - ".:/usr/local/src/harmonize/"
+      - "../auth:/usr/local/src/harmonize/"
+

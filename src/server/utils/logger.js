@@ -199,18 +199,6 @@ export default class Logger {
       Logger.loadStreams(logger, stream, loggersConfig.get('streams'));
       this.loggers[name] = logger;
     });
-
-    // Enable forwarding logged errors to Newrelic Reporting if the server is in a production environment
-    if (process.env.NODE_ENV === 'production') {
-      bunyan.createLogger({
-        name: SERVER_CONFIG.name,
-        streams: [{
-          level: 'error',
-          type: 'raw',
-          stream: new NewRelicStream(),
-        }],
-      });
-    }
   }
 
   /**

@@ -1,4 +1,3 @@
-import auth0 from 'server/middleware/auth';
 import bodyParser from 'body-parser';
 import config from 'config';
 import compression from 'compression';
@@ -120,9 +119,6 @@ export default class Server {
     // Configure Request logging
     // TODO switch to morgan
     app.use(requestLogger);
-
-    // Hook up auth0/passport
-    auth0(app, conf);
 
     // If we're in development, use webpack middleware to serve client assets.
     // Otherwise, configure the Express Static middleware

@@ -1,4 +1,4 @@
-import * as auth from 'server/api/controllers/auth';
 import * as health from 'server/api/controllers/health';
+import * as meta from 'server/api/controllers/meta';
 
-export { auth, health };
+export { health, meta };

@@ -1,42 +1,13 @@
 {
-  "client": {
-    "config": {},
-    "store": {
-      "account": {},
-      "auth0": {
-        "authenticated": false,
-        "email_verified": false,
-        "email": "",
-        "username": "",
-        "clientID": "",
-        "updated_at": "",
-        "name": "",
-        "picture": "",
-        "user_id": "",
-        "nickname": "",
-        "identities": [],
-        "created_at": "",
-        "sub": ""
-      },
-      "user": {}
-    }
-  },
   "server": {
     "apis": {
-      "auth0": {
-        "domain": "harmonize.auth0.com",
-        "clientID": "bpoFOeoQ2M7xWlVng4yHm2JUecSZe2NE",
-        "redirectUri": "http://localhost:80/app/auth/callback",
-        "audience": "https://harmonize.auth0.com/userinfo",
-        "responseType": "token id_token",
-        "scope": "openid"
-      }
+      "auth0": "auth.harmonize.local/api/v1/`"
     },
     "assets": {
-      "path": "./dist",
-      "url": "/dist"
+      "path": "./assets",
+      "url": "/assets"
     },
-    "name": "harmonize",
+    "name": "app.harmonize",
     "backlog": 511,
     "hostname": "127.0.0.1",
     "port": 3000,
@@ -61,7 +32,7 @@
     }
   },
   "swagger": {
-    "fittingsDirs": [ "./dist/fittings", "./src/server/api/fittings", "node_modules" ],
+    "fittingsDirs": [ "./assets/fittings", "./src/server/api/fittings", "node_modules" ],
     "defaultPipe": null,
     "swaggerControllerPipe": "swagger_controllers",
     "bagpipes": {

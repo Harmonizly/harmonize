@@ -1,5 +1,5 @@
 let harmonize = {
-  name: 'harmonize',
+  name: 'app.harmonize',
   script: './index.js',
 };
 

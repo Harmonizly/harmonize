@@ -1,9 +1,0 @@
-# Files
-npm-debug.log
-.DS_Store
-
-# Directories
-coverage
-.nyc_output
-.tmp
-.git
