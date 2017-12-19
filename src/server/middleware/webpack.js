@@ -1,4 +1,4 @@
-import config from 'configuration/webpack/webpack.client.config';
+import config from 'build/webpack.client.config';
 import webpack from 'webpack';
 import wdm from 'webpack-dev-middleware';
 import whm from 'webpack-hot-middleware';

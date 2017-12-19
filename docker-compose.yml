@@ -23,9 +23,9 @@ services:
     image: harmonize/harmonize:latest
     hostname: auth.harmonize.local
     ports:
-      - "8080:3000"
-      - "9615:9615"
-      - "9229:9229"
+      - "3001:3000"
+      - "9616:9615"
+      - "9230:9229"
     volumes:
       - "../auth:/usr/local/src/harmonize/"
 

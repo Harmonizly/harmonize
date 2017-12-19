@@ -1,3 +1,4 @@
+const config = require('config');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const webpack = require('webpack');
@@ -5,9 +6,10 @@ const webpack = require('webpack');
 const cwd = process.cwd();
 
 // For dynamic public paths: https://webpack.js.org/guides/public-path/
-const ASSET_URL = process.env.ASSET_URL || '/assets';
-const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'assets');
-const STATIC_PATH = process.env.STATIC_PATH || path.resolve(cwd, 'static');
+const ASSET_PATH = path.join(cwd, config.assets.path);
+const ASSET_URL = config.assets.url;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const STATIC_URL = config.static.url;
 
 module.exports = {
   target: 'web',
@@ -18,7 +20,7 @@ module.exports = {
       'babel-polyfill',
       'react-hot-loader/patch',
       'webpack-hot-middleware/client',
-      path.join(cwd, `src/client/index.js`),
+      path.join(cwd, 'src/client/index.js'),
     ],
   },
   resolve: {
@@ -36,7 +38,7 @@ module.exports = {
     rules: [
       {
         test: /\.html$/i,
-        use: 'html-loader'
+        use: 'html-loader',
       },
       {
         test: /\.jsx?$/,
@@ -49,21 +51,21 @@ module.exports = {
         use: [
           {
             loader: 'url-loader',
-          }
-        ]
+          },
+        ],
       },
       {
         test: /\.svg$/,
-        loader: 'svg-inline-loader'
+        loader: 'svg-inline-loader',
       },
     ],
     noParse: /\.min\.js/,
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
-      'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
-      'process.env.STATIC_PATH': JSON.stringify(STATIC_PATH)
+      'CONFIG.ASSET_URL': JSON.stringify(ASSET_URL),
+      'CONFIG.NODE_ENV': JSON.stringify(NODE_ENV),
+      'CONFIG.STATIC_URL': JSON.stringify(STATIC_URL),
     }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.ModuleConcatenationPlugin(),
@@ -74,5 +76,5 @@ module.exports = {
     filename: '[name].js',
     path: ASSET_PATH,
     publicPath: ASSET_URL,
-  }
+  },
 };

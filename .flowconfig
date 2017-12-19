@@ -1,7 +1,7 @@
 [ignore]
 <PROJECT_ROOT>/test/.*
 <PROJECT_ROOT>/static/.*
-<PROJECT_ROOT>/dist/.*
+<PROJECT_ROOT>/assets/.*
 <PROJECT_ROOT>/node_modules/config-chain/test/broken.json
 <PROJECT_ROOT>/index.js
 
@@ -18,6 +18,5 @@ esproposal.decorators=ignore
 esproposal.export_star_as=enable
 
 module.name_mapper='^server\/\(.*\)$' -> '<PROJECT_ROOT>/src/server/\1'
-module.name_mapper='^services\/\(.*\)$' -> '<PROJECT_ROOT>/src/services/\1'
 module.name_mapper='^test\/\(.*\)$' -> '<PROJECT_ROOT>/test/\1'
 module.name_mapper='^client\/\(.*\)$' -> '<PROJECT_ROOT>/src/client/\1'

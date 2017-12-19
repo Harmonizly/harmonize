@@ -1,17 +1,19 @@
+// TODO use webpack merge
+const config = require('config');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
-const fittingsCompiler = require('./webpack.fittings.config.js');
 const webpack = require('webpack');
 
 const cwd = process.cwd();
 
 // For dynamic public paths: https://webpack.js.org/guides/public-path/
-const ASSET_URL = process.env.ASSET_URL || '/assets';
-const ASSET_PATH = process.env.ASSET_PATH || path.resolve(cwd, 'assets');
-const STATIC_PATH = process.env.STATIC_PATH || path.resolve(cwd, 'static');
-const WATCH = (process.env.NODE_ENV === 'development');
+const ASSET_PATH = path.join(cwd, config.assets.path);
+const ASSET_URL = config.assets.url;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const STATIC_URL = config.static.url;
+const WATCH = false; // (process.env.NODE_ENV === 'development');
 
-const serverCompiler = {
+module.exports = {
   target: 'node',
   cache: false,
   devtool: 'source-map',
@@ -19,7 +21,7 @@ const serverCompiler = {
   entry: {
     server: [
       'babel-polyfill',
-      path.join(cwd, `src/server/main.js`),
+      path.join(cwd, 'src/server/main.js'),
     ],
   },
   resolve: {
@@ -28,6 +30,7 @@ const serverCompiler = {
       path.join(cwd, 'static'),
     ],
     alias: {
+      build: path.join(cwd, 'build'),
       client: path.join(cwd, 'src/client'),
       configuration: path.join(cwd, 'config'),
       server: path.join(cwd, 'src/server'),
@@ -40,7 +43,7 @@ const serverCompiler = {
     rules: [
       {
         test: /\.html$/i,
-        use: 'html-loader'
+        use: 'html-loader',
       },
       {
         test: /\.ejs$/i,
@@ -48,43 +51,43 @@ const serverCompiler = {
           loader: 'html-loader',
           options: {
             attrs: ['img:src', 'link:href', 'script:src'],
-            interpolate: true
-          }
-        }
+            interpolate: true,
+          },
+        },
       },
       {
         test: /\.jsx?$/i,
         use: 'babel-loader',
         include: path.join(cwd, 'src'),
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.json$/i,
         use: 'json-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.y(a)?ml$/i,
         use: 'yml-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.(png|jpe?g|gif|icon?)$/i,
-        use: 'url-loader'
+        use: 'url-loader',
       },
       {
         test: /\.svg$/,
-        loader: 'svg-inline-loader'
+        loader: 'svg-inline-loader',
       },
     ],
     noParse: /\.min\.js/,
   },
-  externals: [ nodeExternals() ],
+  externals: [nodeExternals()],
   plugins: [
     new webpack.DefinePlugin({
-      'process.env.ASSET_PATH': JSON.stringify(ASSET_PATH),
-      'process.env.ASSET_URL': JSON.stringify(ASSET_URL),
-      'process.env.STATIC_PATH': JSON.stringify(STATIC_PATH)
+      'CONFIG.ASSET_URL': JSON.stringify(ASSET_URL),
+      'CONFIG.NODE_ENV': JSON.stringify(NODE_ENV),
+      'CONFIG.STATIC_URL': JSON.stringify(STATIC_URL),
     }),
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.NamedModulesPlugin(),
@@ -96,6 +99,5 @@ const serverCompiler = {
     libraryTarget: 'commonjs-module',
     path: ASSET_PATH,
     publicPath: ASSET_URL,
-  }
+  },
 };
-module.exports = [serverCompiler, fittingsCompiler];

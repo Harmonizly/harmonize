@@ -17,6 +17,8 @@ paths:
     get:
       operationId: describe
       summary: Returns the swagger description of the API
+      tags:
+        - meta
       produces:
         - text/plain; charset=utf-8
       responses:
@@ -33,6 +35,8 @@ paths:
     get:
       operationId: ping
       summary: Health check path
+      tags:
+        - health
       produces:
         - text/plain; charset=utf-8
       responses:

@@ -1,35 +1,19 @@
 import config from 'config';
 import ejs from 'ejs';
 import React from 'react';
-import template from 'static/index.ejs';
 
 import App from 'client/app';
 import createStore from 'client/store';
-import Logger from 'server/utils/logger';
+import template from 'static/index.ejs';
 
 import { StaticRouter as Router } from 'react-router-dom';
 import { renderToString } from 'react-dom/server';
 import { Provider } from 'react-redux';
 
-const LOGGER: Object = Logger.get('root');
+import { createApis } from 'client/lib/apis';
+import { getLogger } from 'jarvis';
 
-/**
- * [generateClientConfig description]
- * @return {[type]} [description]
- */
-function generateClientConfig(): Object {
-  const env: string = process.env.NODE_ENV;
-  const cc: Object = {
-    ...config.get('client').config,
-    env,
-  };
-
-  return {
-    config: cc,
-    env,
-    store: config.get('client').store,
-  };
-}
+const LOGGER: Object = getLogger('root');
 
 /**
  * [render description]
@@ -37,15 +21,18 @@ function generateClientConfig(): Object {
  * @param  {[type]} response [description]
  * @return {[type]}          [description]
  */
-export function renderHandler(request: Object, response: Object): void {
-  const cc: Object = generateClientConfig();
+export async function render(request: Object, response: Object): void {
   const context: Object = {};
-  const store: Object = createStore(cc.store, cc.env);
+  // TODO get auth status. If auth'd fill in user and account info
+  const store: Object = createStore();
+
+  // Create the Swagger client APIs and provide them to the app
+  const apis: Object = await createApis(config.apis);
 
   const markup: String = renderToString((
     <Provider store={store}>
       <Router location={request.url} context={context}>
-        <App config={cc.config} />
+        <App apis={apis} />
       </Router>
     </Provider>
   ));
@@ -58,8 +45,6 @@ export function renderHandler(request: Object, response: Object): void {
   // TODO set data for client in JWT
   const html: string = ejs.render(template, {
     app: markup,
-    config: cc.config,
-    store: store.getState(),
   });
 
   return response.send(html);

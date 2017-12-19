@@ -12,8 +12,7 @@
     "ecmaVersion": 8
   },
   "plugins": [
-    "flowtype",
-    "chai-friendly"
+    "flowtype"
   ],
   "rules": {
     "arrow-body-style": [ "error", "always" ],
@@ -28,7 +27,6 @@
     "no-debugger": "off",
     "no-param-reassign": "error",
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
-    "chai-friendly/no-unused-expressions": 2,
     "padding-line-between-statements": [
       "error",
       { "blankLine": "always", "prev": [ "const", "let", "var" ], "next": "*" },
@@ -77,7 +75,7 @@
   "settings": {
     "import/resolver": {
       "webpack": {
-        "config": "config/webpack/webpack.config.js"
+        "config": "build/webpack.config.js"
       }
     }
   }

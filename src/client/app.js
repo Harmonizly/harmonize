@@ -1,55 +1,39 @@
 import 'rxjs';
 
-import DevTools from 'client/containers/devtools';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Routes from 'client/lib/routes';
 
-import { injectGlobal } from 'emotion';
-import { Sidebar, Segment } from 'semantic-ui-react'
+import DevTools from 'client/containers/devtools';
+import Routes from 'client/routes';
 
-injectGlobal`
+import { Sidebar, Segment } from 'semantic-ui-react';
 
-  #harmonize {
-    height: 100%;
-  }
-
-  .collapsed {
-    padding: 0 !important;
-  }
-
-  .fill {
-    height: 100%;
-    width: 100%;
-  }
-`;
+// Define the apis we're expecting
+const APIS_SHAPE: Object = {
+  auth: PropTypes.object,
+};
 
 /**
  * [store description]
  * @type {Object}
  */
 export default class App extends React.Component {
-  static propTypes: Object = {
-    config: PropTypes.object.isRequired,
+  static childContextTypes: Object = {
+    apis: PropTypes.shape(APIS_SHAPE).isRequired,
   };
 
-  config: Object = {};
+  static propTypes: Object = {
+    apis: PropTypes.shape(APIS_SHAPE).isRequired,
+  };
 
   /**
-   * [props description]
+   * [apis description]
    * @type {[type]}
    */
-  constructor(props: Object, context: Object): void {
-    super(props, context);
-    this.config = { ...props.config };
-  }
-
-  /**
-   * [env description]
-   * @type {[type]}
-   */
-  renderDevtools(): ?React$Element {
-    return (this.config.env === 'development') ? (<DevTools />) : null;
+  getChildContext(): Object {
+    return {
+      apis: this.props.apis,
+    };
   }
 
   /**
@@ -65,5 +49,13 @@ export default class App extends React.Component {
         </Sidebar.Pusher>
       </Sidebar.Pushable>
     );
+  }
+
+  /**
+  * [env description]
+  * @type {[type]}
+  */
+  renderDevtools(): ?React$Element {
+    return (this.config.env === 'development') ? (<DevTools />) : null;
   }
 }

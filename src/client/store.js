@@ -17,12 +17,12 @@ function getEnhancers(env): Function {
  * [state description]
  * @type {[type]}
  */
-export default (initialState: Object, env: string): Object => {
+export default (): Object => {
+  const env: string = process.env.NODE_ENV;
   const enhancer: Function = getEnhancers(env);
 
   const store: Object = createStore(
     rootReducer,
-    initialState,
     enhancer,
   );
 

@@ -10,7 +10,7 @@ WORKDIR /usr/local/src/harmonize
 RUN yarn install
 RUN make all
 
-EXPOSE 80
+EXPOSE 3000
 EXPOSE 9615
 
 ENTRYPOINT ["yarn", "start"]
