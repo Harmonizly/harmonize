@@ -1,6 +1,7 @@
 // TODO use webpack merge
 const config = require('config');
 const nodeExternals = require('webpack-node-externals');
+const npm_package = require('../package.json')
 const path = require('path');
 const webpack = require('webpack');
 
@@ -12,6 +13,12 @@ const ASSET_URL = config.assets.url;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const STATIC_URL = config.static.url;
 const WATCH = false; // (process.env.NODE_ENV === 'development');
+
+function module_alias(aliases) {
+  return Object.assign(...Object.entries(
+    npm_package._moduleAliases).map(([k, v]) => ({ [k]: path.join(cwd, v) }))
+  ) || {}
+}
 
 module.exports = {
   target: 'node',
@@ -25,19 +32,11 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: module_alias(npm_package._moduleAliases),
+    extensions: ['.json', '.js', '.min.js'],
     modules: [
-      path.join(cwd, 'node_modules'),
       path.join(cwd, 'static'),
     ],
-    alias: {
-      build: path.join(cwd, 'build'),
-      client: path.join(cwd, 'src/client'),
-      configuration: path.join(cwd, 'config'),
-      server: path.join(cwd, 'src/server'),
-      static: path.join(cwd, 'static'),
-      tests: path.join(cwd, 'tests'),
-    },
-    extensions: ['.json', '.js', '.min.js'],
   },
   module: {
     rules: [
@@ -56,37 +55,38 @@ module.exports = {
         },
       },
       {
-        test: /\.jsx?$/i,
+        test: /\.js$/i,
         use: 'babel-loader',
-        include: path.join(cwd, 'src'),
+        include: [path.join(cwd, 'src')],
+      },
+      {
+        test:    /\.json$/i,
+        use:     'json-loader',
         exclude: /node_modules/,
       },
       {
-        test: /\.json$/i,
-        use: 'json-loader',
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.y(a)?ml$/i,
-        use: 'yml-loader',
+        test:    /\.y(a)?ml$/i,
+        use:     'yml-loader',
         exclude: /node_modules/,
       },
       {
         test: /\.(png|jpe?g|gif|icon?)$/i,
-        use: 'url-loader',
+        use:  'url-loader',
       },
       {
-        test: /\.svg$/,
+        test:   /\.svg$/,
         loader: 'svg-inline-loader',
       },
     ],
     noParse: /\.min\.js/,
   },
-  externals: [nodeExternals()],
+  externals: [
+    nodeExternals()
+  ],
   plugins: [
     new webpack.DefinePlugin({
-      'CONFIG.ASSET_URL': JSON.stringify(ASSET_URL),
-      'CONFIG.NODE_ENV': JSON.stringify(NODE_ENV),
+      'CONFIG.ASSET_URL':  JSON.stringify(ASSET_URL),
+      'CONFIG.NODE_ENV':   JSON.stringify(NODE_ENV),
       'CONFIG.STATIC_URL': JSON.stringify(STATIC_URL),
     }),
     new webpack.optimize.ModuleConcatenationPlugin(),
@@ -94,10 +94,10 @@ module.exports = {
   ],
   output: {
     chunkFilename: '[name].[id].js',
-    filename: '[name].js',
-    library: 'Server',
-    libraryTarget: 'commonjs-module',
-    path: ASSET_PATH,
-    publicPath: ASSET_URL,
+    filename:      '[name].js',
+    library:       'Server',
+    libraryTarget: 'commonjs2',
+    path:           ASSET_PATH,
+    publicPath:     ASSET_URL,
   },
 };

@@ -15,17 +15,3 @@ services:
       - auth.harmonize
     volumes:
       - ".:/usr/local/src/harmonize/"
-  auth.harmonize:
-    build:
-      context: "../auth"
-      args:
-        NODE_ENV: development
-    image: harmonize/harmonize:latest
-    hostname: auth.harmonize.local
-    ports:
-      - "3001:3000"
-      - "9616:9615"
-      - "9230:9229"
-    volumes:
-      - "../auth:/usr/local/src/harmonize/"
-

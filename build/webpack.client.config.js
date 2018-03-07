@@ -1,5 +1,6 @@
 const config = require('config');
 const nodeExternals = require('webpack-node-externals');
+const npm_package = require('../package.json')
 const path = require('path');
 const webpack = require('webpack');
 
@@ -10,6 +11,12 @@ const ASSET_PATH = path.join(cwd, config.assets.path);
 const ASSET_URL = config.assets.url;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const STATIC_URL = config.static.url;
+
+function module_alias(aliases) {
+  return Object.assign(...Object.entries(
+    npm_package._moduleAliases).map(([k, v]) => ({ [k]: path.join(cwd, v) }))
+  ) || {}
+}
 
 module.exports = {
   target: 'web',
@@ -24,15 +31,12 @@ module.exports = {
     ],
   },
   resolve: {
+    alias: module_alias(npm_package._moduleAliases),
+    extensions: ['.json', '.js', '.min.js'],
     modules: [
       path.join(cwd, 'node_modules'),
       path.join(cwd, 'static'),
     ],
-    alias: {
-      client: path.join(cwd, 'src/client'),
-      static: path.join(cwd, 'static'),
-    },
-    extensions: ['.json', '.js', '.min.js'],
   },
   module: {
     rules: [

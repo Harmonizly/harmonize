@@ -1,51 +1,104 @@
-import config from 'config';
 import ejs from 'ejs';
 import React from 'react';
 
+import { Logger } from 'axon';
+import { Provider } from 'react-redux';
+import { renderToString } from 'react-dom/server';
+import { StaticRouter as Router } from 'react-router-dom';
+
 import App from 'client/app';
+import AccountService from 'server/api/services/accounts';
+import AuthService from 'server/api/services/auth';
 import createStore from 'client/store';
 import template from 'static/index.ejs';
+import UserService from 'server/api/services/users';
 
-import { StaticRouter as Router } from 'react-router-dom';
-import { renderToString } from 'react-dom/server';
-import { Provider } from 'react-redux';
+const LOGGER: Object = Logger.getLogger('root');
 
-import { createApis } from 'client/lib/apis';
-import { getLogger } from 'jarvis';
+/**
+ * [getAccountState description]
+ * @param  {[type]} api [description]
+ * @return {[type]}     [description]
+ */
+async function getAccountState(userId: Number): Object {
+  return AccountService.account(userId);
+}
 
-const LOGGER: Object = getLogger('root');
+/**
+ * [getAuthState description]
+ * @param  {[type]} api [description]
+ * @return {[type]}     [description]
+ */
+async function getAuthState(): Object {
+  // TODO reach out to auth0
+  return AuthService.session();
+}
+
+/**
+ * [getUserState description]
+ * @param  {[type]} api [description]
+ * @return {[type]}     [description]
+ */
+async function getUserState(userId: Number): Object {
+  return UserService.user(userId);
+}
+
+/**
+ * [getPreloadedState description]
+ * @return {[type]} [description]
+ */
+async function getPreloadedState(): Object {
+  // TODO move this check into middleware and put user info in ctx
+  const auth = await getAuthState();
+  // TODO check auth status and redirect?
+
+  const [account, user] = await Promise.all(
+    getAccountState(auth.id),
+    getUserState(auth.id),
+  );
+
+  return {
+    account,
+    auth,
+    user,
+  };
+}
 
 /**
  * [render description]
- * @param  {[type]} request  [description]
- * @param  {[type]} response [description]
- * @return {[type]}          [description]
+ * @param  {[type]} ctx  [description]
+ * @return {[type]}      [description]
  */
-export async function render(request: Object, response: Object): void {
+export default async function render(ctx: Object): void {
   const context: Object = {};
-  // TODO get auth status. If auth'd fill in user and account info
-  const store: Object = createStore();
+  let markup: String = '';
 
-  // Create the Swagger client APIs and provide them to the app
-  const apis: Object = await createApis(config.apis);
+  // TODO move into a method?
+  try {
+    const store: Object = createStore(getPreloadedState());
 
-  const markup: String = renderToString((
-    <Provider store={store}>
-      <Router location={request.url} context={context}>
-        <App apis={apis} />
-      </Router>
-    </Provider>
-  ));
+    markup = renderToString((
+      <Provider store={store}>
+        <Router location={ctx.url} context={context}>
+          <App />
+        </Router>
+      </Provider>
+    ));
+  } catch (e) {
+    LOGGER.error(e);
+    context.url = '/error/500';
+  }
 
   if (context.url) {
     LOGGER.info(`redirecting to: ${context.url}`);
-    return response.redirect(301, context.url);
+    return ctx.redirect(301, context.url);
   }
 
-  // TODO set data for client in JWT
   const html: string = ejs.render(template, {
     app: markup,
   });
 
-  return response.send(html);
+  ctx.body = html;
+
+  return null;
 }

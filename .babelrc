@@ -17,9 +17,6 @@
     "react"
   ],
   "sourceMaps": true,
-  "ignore": [
-    "node_modules"
-  ],
   "env": {
     "test": {
       "plugins": ["istanbul"]

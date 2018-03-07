@@ -19,13 +19,12 @@
     "class-methods-use-this": "off",
     "flowtype/no-types-missing-file-annotation": "off",
     "func-names": [ "error", "as-needed" ],
-    "function-paren-newline": "off",
+    "function-paren-newline": ["error", "multiline"],
     "import/extensions": "off",
     "import/prefer-default-export": "off",
     "linebreak-style": "warn",
     "max-len": [ "error", 120, 2 ],
-    "no-debugger": "off",
-    "no-param-reassign": "error",
+    "no-debugger": "warn",
     "no-plusplus": [ "error", { "allowForLoopAfterthoughts": true } ],
     "padding-line-between-statements": [
       "error",
@@ -74,8 +73,11 @@
   },
   "settings": {
     "import/resolver": {
-      "webpack": {
-        "config": "build/webpack.config.js"
+      "configurable": {
+        "build": "./build",
+        "client": "./src/client",
+        "static": "./static",
+        "server": "./src/server"
       }
     }
   }

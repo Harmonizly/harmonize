@@ -1,7 +1,10 @@
 import config from 'build/webpack.client.config';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import webpack from 'webpack';
-import wdm from 'webpack-dev-middleware';
-import whm from 'webpack-hot-middleware';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import wdm from 'koa-webpack-dev-middleware';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import whm from 'koa-webpack-hot-middleware';
 
 const compiler: Object = webpack(config);
 
