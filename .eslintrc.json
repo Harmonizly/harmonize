@@ -18,6 +18,7 @@
     "arrow-body-style": [ "error", "always" ],
     "class-methods-use-this": "off",
     "flowtype/no-types-missing-file-annotation": "off",
+    "flowtype/union-intersection-spacing": "off",
     "func-names": [ "error", "as-needed" ],
     "function-paren-newline": ["error", "multiline"],
     "import/extensions": "off",
@@ -32,53 +33,12 @@
       { "blankLine": "any",    "prev": [ "const", "let", "var" ], "next": [ "const", "let", "var" ] }
     ],
     "prefer-arrow-callback": [ "error", { "allowNamedFunctions": true } ],
-    "react/jsx-filename-extension": "off",
-    "react/prefer-stateless-function": "off",
-    "react/sort-comp": [ "warn", {
-      "order": [
-        "statics",
-        "propTypes",
-        "contextTypes",
-        "childContextTypes",
-        "state",
-        "instance-variables",
-        "displayName",
-        "mixins",
-        "defaultProps",
-        "constructor",
-        "static-methods",
-        "lifecycle",
-        "everything-else",
-        "rendering"
-      ],
-      "groups": {
-        "lifecycle": [
-          "getDefaultProps",
-          "getInitialState",
-          "getChildContext",
-          "componentWillMount",
-          "componentDidMount",
-          "componentWillReceiveProps",
-          "shouldComponentUpdate",
-          "componentWillUpdate",
-          "componentDidUpdate",
-          "componentWillUnmount"
-        ],
-        "rendering": [
-          "render",
-          "/^render.+$/"
-        ]
-      }
-    }]
+    "react/forbid-prop-types": "warn",
+    "react/jsx-filename-extension": "off"
   },
   "settings": {
     "import/resolver": {
-      "configurable": {
-        "build": "./build",
-        "client": "./src/client",
-        "static": "./static",
-        "server": "./src/server"
-      }
+      "babel-module": {}
     }
   }
 }

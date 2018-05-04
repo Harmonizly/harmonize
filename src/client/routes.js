@@ -9,22 +9,23 @@ import InternalServerErrorPage from 'client/pages/error/500';
 import NotFoundPage from 'client/pages/error/404';
 import PageContainer from 'client/containers/page';
 
-import { connect } from 'react-redux';
 import {
   Redirect,
   Route,
   Switch,
 } from 'react-router-dom';
 
+const TYPE_AUTH: Object = {
+  authenticated: PropTypes.bool,
+};
+
 /**
  * [path description]
  * @type {String}
  */
-class Routes extends React.Component {
+export default class Routes extends React.PureComponent {
   static propTypes: Object = {
-    auth: PropTypes.shape({
-      authenticated: PropTypes.bool,
-    }).isRequired,
+    auth: PropTypes.shape(TYPE_AUTH).isRequired,
   };
 
   /**
@@ -61,9 +62,3 @@ class Routes extends React.Component {
     );
   }
 }
-
-export default connect((store: Object) => {
-  return {
-    auth: store.auth,
-  };
-})(Routes);

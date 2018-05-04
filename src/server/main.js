@@ -1,10 +1,9 @@
-import 'module-alias/register';
-
 import config from 'config';
 import Server from 'axon';
 
 import router from 'server/api/router';
-import { webpackDevMiddleware, webpackHotMiddleware } from 'server/middleware/webpack';
+import { ensureAuthenticated } from 'server/middleware/aaa';
+import { webpackDevMiddleware } from 'server/middleware/webpack';
 
 
 /**
@@ -28,14 +27,18 @@ export default class HarmonyServer extends Server {
    * @return {Promise}      [description]
    */
   async configure(app: Object): void {
-    if (process.env.NODE_ENV === 'development') {
-      this.logger.info('In development mode. Using webpack dev middleware...');
-      app.use(webpackDevMiddleware);
-      app.use(webpackHotMiddleware);
-    }
+    app.use(ensureAuthenticated);
 
-    // Serve static rendered content on the root URL
-    app.use(router.routes());
-    app.use(router.allowedMethods());
+    if (process.env.NODE_ENV === 'development') {
+      this.logger.info('Using webpack dev middleware...');
+      app.use(webpackDevMiddleware);
+    }
+  }
+
+  /**
+   *
+   */
+  createRouter(): Object {
+    return router;
   }
 }

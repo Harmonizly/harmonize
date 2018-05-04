@@ -6,7 +6,7 @@ import { Container } from 'semantic-ui-react';
 /**
  *
  */
-export default class ContentContainer extends React.Component {
+export default class ContentContainer extends React.PureComponent {
   static propTypes: Object = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),

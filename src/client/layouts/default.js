@@ -19,7 +19,7 @@ export default class DefaultLayout extends React.Component {
   };
 
   static defaultProps: Object = {
-    header: null
+    header: null,
   }
 
   /**

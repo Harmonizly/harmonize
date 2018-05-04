@@ -5,7 +5,7 @@ import React from 'react';
  *
  */
 export default class ErrorBoundary extends React.Component {
-  static propTypes: Obejct = {
+  static propTypes: Object = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.node),
       PropTypes.node,

@@ -28,6 +28,10 @@ module.exports = {
         name: 'root',
         level: 'debug',
       },
+      services: {
+        name: 'services',
+        level: 'info',
+      },
     },
     streams: {},
   },
@@ -36,9 +40,28 @@ module.exports = {
   secure: false,
   ssl: {},
   services: {
-    auth: {
-      url: '//auth.harmonize.local/api/v1/',
+    account: {
+      uri: 'http://account.harmonize.local',
     },
+    auth: {
+      uri: 'http://auth.harmonize.local',
+    },
+    user: {
+      uri: 'http://user.harmonize.local',
+    },
+    options: {
+      retry: {
+        delay: {
+          initial: 500,
+          max: 30 * 1000,
+          jitter: true
+        },
+        attempts: {
+          max: 5,
+          retryIf: error => !!error
+        }
+      }
+    }
   },
   static: {
     options: {},

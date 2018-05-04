@@ -2,7 +2,15 @@
   "plugins": [
     "syntax-flow",
     "transform-decorators-legacy",
-    "react-hot-loader/babel"
+    "react-hot-loader/babel",
+    ["module-resolver", {
+      "alias": {
+        "build": "./build",
+        "client": "./src/client",
+        "static": "./static",
+        "server": "./src/server"
+      }
+    }]
   ],
   "presets": [
     [

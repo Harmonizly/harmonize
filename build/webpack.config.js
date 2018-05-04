@@ -1,7 +1,6 @@
 // TODO use webpack merge
 const config = require('config');
 const nodeExternals = require('webpack-node-externals');
-const npm_package = require('../package.json')
 const path = require('path');
 const webpack = require('webpack');
 
@@ -12,16 +11,11 @@ const ASSET_PATH = path.join(cwd, config.assets.path);
 const ASSET_URL = config.assets.url;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const STATIC_URL = config.static.url;
-const WATCH = false; // (process.env.NODE_ENV === 'development');
-
-function module_alias(aliases) {
-  return Object.assign(...Object.entries(
-    npm_package._moduleAliases).map(([k, v]) => ({ [k]: path.join(cwd, v) }))
-  ) || {}
-}
+const WATCH = (process.env.NODE_ENV === 'development');
 
 module.exports = {
   target: 'node',
+  mode: NODE_ENV === 'PRODUCTION' ? 'production' : 'development',
   cache: false,
   devtool: 'source-map',
   watch: WATCH,
@@ -32,7 +26,6 @@ module.exports = {
     ],
   },
   resolve: {
-    alias: module_alias(npm_package._moduleAliases),
     extensions: ['.json', '.js', '.min.js'],
     modules: [
       path.join(cwd, 'static'),
@@ -41,8 +34,9 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.html$/i,
-        use: 'html-loader',
+        test: /\.(graphql|gql)$/,
+        use: 'graphql-tag/loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.ejs$/i,
@@ -89,9 +83,12 @@ module.exports = {
       'CONFIG.NODE_ENV':   JSON.stringify(NODE_ENV),
       'CONFIG.STATIC_URL': JSON.stringify(STATIC_URL),
     }),
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new webpack.NamedModulesPlugin(),
   ],
+  optimization: {
+    namedModules: true,
+    noEmitOnErrors: true,
+    concatenateModules: true,
+  },
   output: {
     chunkFilename: '[name].[id].js',
     filename:      '[name].js',
