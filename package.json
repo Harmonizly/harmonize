@@ -33,7 +33,7 @@
     "greenkeeper-lockfile": "^1.14.0",
     "koa-router": "^7.4.0",
     "node-fetch": "^2.1.2",
-    "pm2": "^2.10.3",
+    "pm2": "^3.0.0",
     "prop-types": "^15.6.1",
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
